@@ -58,7 +58,7 @@ wss.on('connection', (ws) => {
         if (msg.type === 'login') {
             ws.wallId = normalizeWall(msg.wallId);
             if (activeUsers.has(msg.u)) { ws.send(JSON.stringify({ type: 'login-result', id: 'system', target: msg.id, success: false, err: 'Username is already taken.' })); return; }
-            if (msg.u === 'RubixYT') {
+            if (msg.u === 'yourOwnerName') {
                 if (msg.p !== ownerPass) { ws.send(JSON.stringify({ type: 'login-result', id: 'system', target: msg.id, success: false, err: 'Wrong owner password.' })); return; }
             } else {
                 if (db.accounts[msg.u]) {
