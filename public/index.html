@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Periawall 0.1.13</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Periawall 0.1.16</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=Source+Code+Pro:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0908;--surface:#15110d;--ink:#f3e9d2;--ink-dim:#8b7e6a;
+  --bg:#0a0908;--surface:#15110d;--surface-2:#1d1812;--ink:#f3e9d2;--ink-dim:#8b7e6a;
   --accent:#ff8a3d;--accent-2:#ffd166;
   --accent-rgb:255,138,61; --accent-2-rgb:255,209,102;
-  --border:rgba(243,233,210,.1);
+  --border:rgba(243,233,210,.1);--radius:8px;
+  --danger:#ff4757;
 }
 body.theme-red { --accent:#e63946;--accent-2:#ff8a8a; --accent-rgb:230,57,70; --accent-2-rgb:255,138,138; }
 body.theme-green { --accent:#06d6a0;--accent-2:#80ed99; --accent-rgb:6,214,160; --accent-2-rgb:128,237,153; }
@@ -25,6 +26,7 @@ body.theme-cyan { --accent:#00b4d8;--accent-2:#48cae4; --accent-rgb:0,180,216; -
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--ink);font-family:'JetBrains Mono',ui-monospace,monospace;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;overflow:hidden;}
 body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.35;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 .8 0 0 0 0 .5 0 0 0 .06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");}
+body.perf-mode::after{display:none}
 
 .app { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; overflow: auto; z-index: 2; cursor: crosshair; }
 .app.no-sel { cursor: default; }
@@ -47,11 +49,15 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .hud-tl{top:18px;left:18px}
 .hud-br{bottom:18px;right:18px}.hud-bl{bottom:18px;left:18px}
 
-.coord{background:rgba(15,12,9,.72);backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;padding:7px 11px;border-radius:4px;letter-spacing:1.2px;display:flex;align-items:center;gap:8px;color:var(--accent-2);}
+.coord{background:rgba(15,12,9,.72);backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;padding:7px 11px;border-radius:var(--radius);letter-spacing:1.2px;display:flex;align-items:center;gap:8px;color:var(--accent-2);}
 .coord::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 6px var(--accent-2)}
 
-.hud-tr{top:18px;right:18px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:300px;cursor:pointer;}
-.user-chip {font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;padding:3px 7px;border-radius:0 3px 3px 3px;white-space:nowrap;letter-spacing:1px;box-shadow:0 4px 12px rgba(0,0,0,.4);display:inline-flex;align-items:center;gap:4px;cursor:pointer;text-decoration:none;}
+#muteBadge{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-120%);z-index:41;display:flex;align-items:center;gap:6px;background:rgba(30,8,12,.95);border:1px solid var(--danger);color:#ffd1d6;padding:6px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.5px;transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 6px 20px rgba(0,0,0,.5);pointer-events:none;}
+#muteBadge.show{transform:translateX(-50%) translateY(0)}
+#muteBadge.chat{border-color:var(--accent);color:var(--accent-2)}
+
+.hud-tr{top:18px;right:18px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:300px;cursor:pointer;pointer-events:none;}
+.user-chip {font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;padding:3px 7px;border-radius:0 3px 3px 3px;white-space:nowrap;letter-spacing:1px;box-shadow:0 4px 12px rgba(0,0,0,.4);display:inline-flex;align-items:center;gap:4px;cursor:pointer;text-decoration:none;pointer-events:auto;}
 .user-chip.self {background:transparent;color:var(--c);border:1px solid var(--c);opacity:0.7;box-shadow:none;}
 .user-chip.other {background:transparent;color:var(--c);border:1px solid var(--c);opacity:0.7;box-shadow:none;}
 .user-chip.is-wall-link { text-decoration:underline; }
@@ -59,31 +65,41 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .user-chip.is-admin { background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; background-clip: text; color: transparent; border: 1px solid transparent; text-shadow: 0 0 8px rgba(157, 78, 221, 0.6); }
 .user-chip.is-member { background: linear-gradient(90deg, #00b4d8, #48cae4); -webkit-background-clip: text; background-clip: text; color: transparent; border: 1px solid transparent; text-shadow: 0 0 8px rgba(0, 180, 216, 0.6); }
 
-.brand{color:var(--ink-dim);font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);padding:7px 11px;border-radius:4px;}
+.brand{color:var(--ink-dim);font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);padding:7px 11px;border-radius:var(--radius);}
 .brand b{color:var(--accent);font-weight:700;letter-spacing:2px}
 
 .options-container { position: fixed; top: 18px; left: 18px; z-index: 25; display: flex; align-items: flex-start; pointer-events: none; }
-.options-btn {background:rgba(15,12,9,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);color:var(--ink);padding:7px 14px;border-radius:4px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase;transition:background .2s; flex-shrink:0; pointer-events: auto;}
-.options-btn:hover { background:rgba(30,24,18,.9); }
-.options-panel {position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,12,9,.98);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transform:translateX(-110%);opacity:0;transition:transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s; pointer-events: none; overflow-y:auto; padding: 60px 20px 20px 20px;}
+.options-btn {background:rgba(15,12,9,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);color:var(--ink);padding:8px 16px;border-radius:var(--radius);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase;transition:background .2s,transform .12s; flex-shrink:0; pointer-events: auto;display:flex;align-items:center;gap:6px;}
+.options-btn:hover { background:rgba(40,30,20,.95);border-color:rgba(var(--accent-rgb),.5);}
+.options-btn:active{transform:scale(.96)}
+.options-btn .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.options-panel {position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(10,9,8,.98);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transform:translateX(-110%);opacity:0;transition:transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s; pointer-events: none; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:56px 16px 40px 16px;}
 .options-panel.open { transform:translateX(0); opacity:1; pointer-events: auto; }
-.opt-close { position: absolute; top: 18px; right: 18px; background: transparent; border: 1px solid var(--border); color: var(--ink); border-radius: 4px; padding: 6px 12px; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
-.opt-inner { max-width: 400px; margin: 0 auto; }
-.opt-tabs { display:flex; gap:4px; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px; }
-.opt-tab { background:transparent; border:1px solid transparent; color:var(--ink-dim); padding:4px 8px; border-radius:4px; cursor:pointer; font-family:'Space Grotesk',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; }
-.opt-tab.active { color:var(--accent); border-color:var(--border); }
-.opt-section { margin-bottom:16px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); }
+.opt-close { position: fixed; top: 14px; right: 16px; background: rgba(15,12,9,.9); border: 1px solid var(--border); color: var(--ink); border-radius: var(--radius); padding: 7px 14px; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 11px; letter-spacing:1px; z-index: 26; }
+.opt-inner { max-width: 440px; margin: 0 auto; }
+.opt-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.opt-head h2{font-family:'Space Grotesk',sans-serif;font-size:20px;letter-spacing:-.5px;}
+.opt-head h2 span{color:var(--accent)}
+.opt-head .ver{font-size:10px;color:var(--ink-dim);letter-spacing:1px;background:var(--surface-2);border:1px solid var(--border);padding:3px 8px;border-radius:20px;}
+.opt-tabs { display:flex; gap:4px; margin-bottom:14px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px; }
+.opt-tab { flex:1; background:transparent; border:none; color:var(--ink-dim); padding:8px 6px; border-radius:6px; cursor:pointer; font-family:'Space Grotesk',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; transition: all 0.2s; }
+.opt-tab.active { color:#0a0908; background:var(--accent); box-shadow:0 4px 12px rgba(var(--accent-rgb),.35); }
+.opt-section { margin-bottom:12px; padding: 14px; background: linear-gradient(180deg, var(--surface) 0%, rgba(0,0,0,0.15) 100%); border-radius: var(--radius); border: 1px solid var(--border); border-left:3px solid rgba(var(--accent-rgb),.5);}
+.opt-section.danger-sec{border-left-color:var(--danger)}
 .opt-section:last-child { margin-bottom:0; }
-.opt-title { font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px; }
+.opt-title { font-size:10px;color:var(--ink);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:700;display:flex;align-items:center;gap:6px; }
+.opt-title .ic{font-size:13px;}
 .opt-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:6px; font-size:12px;}
-.toggle-sw { position:relative;width:36px;height:20px;background:var(--border);border-radius:10px;cursor:pointer;transition:background .2s; }
-.toggle-sw.on { background:var(--accent); }
+.opt-row:last-child{margin-bottom:0}
+.toggle-sw { position:relative;width:38px;height:22px;background:var(--surface-2);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle-sw.on { background:var(--accent);border-color:var(--accent); }
 .toggle-sw::after { content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s; }
 .toggle-sw.on::after { left:18px; }
 .wall-link { color:var(--accent); text-decoration:underline; cursor:pointer; }
 .wall-link:hover { text-shadow:0 0 8px var(--accent); }
 .theme-btns { display:flex;gap:6px;flex-wrap:wrap; }
-.theme-btn { width:24px;height:24px;border-radius:4px;border:2px solid transparent;cursor:pointer; }
+.theme-btn { width:26px;height:26px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:transform .12s; }
+.theme-btn:hover{transform:scale(1.12)}
 .theme-btn.active { border-color:#fff; }
 .theme-btn[data-theme="orange"] { background:#ff8a3d; }
 .theme-btn[data-theme="red"] { background:#e63946; }
@@ -92,23 +108,28 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .theme-btn[data-theme="purple"] { background:#9d4edd; }
 .theme-btn[data-theme="pink"] { background:#ff006e; }
 .theme-btn[data-theme="cyan"] { background:#00b4d8; }
-.login-btn, .admin-btn, .wall-btn, .logout-btn { width:100%;padding:8px;background:var(--accent);color:#0a0908;border:none;border-radius:4px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;margin-bottom:6px;transition:filter .2s;}
-.login-btn:hover, .admin-btn:hover, .wall-btn:hover, .logout-btn:hover { filter:brightness(1.1); }
+.login-btn, .admin-btn, .wall-btn, .logout-btn, .danger-btn { width:100%;padding:9px;background:var(--accent);color:#0a0908;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;cursor:pointer;text-transform:uppercase;margin-bottom:6px;transition:filter .2s,transform .1s;letter-spacing:.5px;}
+.login-btn:hover, .admin-btn:hover, .wall-btn:hover { filter:brightness(1.1); }
+.login-btn:active, .admin-btn:active, .wall-btn:active{transform:translateY(1px)}
 .admin-btn { background:var(--accent-2); font-size:10px; }
 .logout-btn { background:transparent; color:var(--ink); border:1px solid var(--border); }
+.danger-btn { background:var(--danger); color:#fff; }
+.danger-btn:hover{filter:brightness(1.1)}
 #ownerPanel, #modPanel, #memberPanel, #userWallPanel { display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
-.wall-input, #fontSelect { width:100%;padding:8px;margin-bottom:6px;background:var(--bg);border:1px solid var(--border);color:var(--ink);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;}
-.wall-input:focus, #fontSelect:focus { border-color:var(--accent); }
+.wall-input, #fontSelect, #purgeSelect { width:100%;padding:9px;margin-bottom:6px;background:var(--bg);border:1px solid var(--border);color:var(--ink);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;}
+.wall-input:focus, #fontSelect:focus, #purgeSelect:focus { border-color:var(--accent); }
+#purgeSelect{height:auto;padding:6px;}
 .zoom-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; background: var(--border); border-radius: 2px; outline: none; }
 .zoom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; }
 .zoom-slider::-moz-range-thumb { width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; }
+.opt-divider{height:1px;background:var(--border);margin:10px 0;}
 
 .bl-wrap { display: flex; gap: 8px; pointer-events: auto; }
 .slider-container { position:relative; }
 .slider-toggle { width:56px;height:56px;border-radius:50%;border:2px solid rgba(243,233,210,.15);background:rgba(15,12,9,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .15s;padding:0;touch-action:manipulation;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;}
 .slider-toggle:hover { transform:scale(1.08);border-color:rgba(243,233,210,.35) }
 .slider-toggle:active { transform:scale(.94) }
-.slider-panel { position:absolute;bottom:66px;left:0;display:flex;flex-direction:column;gap:8px;padding:12px;background:rgba(15,12,9,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:8px;opacity:0;pointer-events:none;transform:translateY(8px) scale(.92);transition:opacity .2s,transform .2s;box-shadow:0 12px 32px rgba(0,0,0,.5);width:260px;max-height:320px;overflow-y:auto;}
+.slider-panel { position:absolute;bottom:66px;left:0;display:flex;flex-direction:column;gap:10px;padding:14px;background:rgba(15,12,9,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);border-top:2px solid rgba(var(--accent-rgb),.5);border-radius:var(--radius);opacity:0;pointer-events:none;transform:translateY(10px) scale(.92);transition:opacity .2s,transform .2s;box-shadow:0 16px 40px rgba(0,0,0,.6);width:280px;max-height:360px;overflow-y:auto;scrollbar-width:thin;} .slider-panel::-webkit-scrollbar{width:6px;} .slider-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 .slider-panel.open { opacity:1;pointer-events:auto;transform:translateY(0) scale(1) }
 .palette-row { display:flex;gap:6px;flex-wrap:wrap; }
 .fmt-row { display:flex;gap:6px;justify-content:center;border-top:1px solid var(--border);padding-top:8px; }
@@ -121,6 +142,9 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .pswatch.grad-toxic { background: linear-gradient(90deg, #a8ff78, #78ffd6); }
 .pswatch.grad-gold { background: linear-gradient(90deg, #ffd166, #ff8a3d); }
 .pswatch.grad-rainbow { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); }
+.pswatch.grad-candy { background: linear-gradient(90deg, #f857a6, #ff5858); }
+.pswatch.grad-neon { background: linear-gradient(90deg, #08f7fe, #09fbd3); }
+.pswatch.grad-fire { background: linear-gradient(90deg, #f12711, #f5af19); }
 .pswatch.custom { background:conic-gradient(from 0deg,#ff0000,#ffff00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000);position:relative;overflow:hidden; }
 .pswatch.custom span { color:#fff;font-size:16px;font-weight:700;line-height:1;text-shadow:0 0 4px rgba(0,0,0,.9);pointer-events:none }
 .pswatch.custom input { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0 }
@@ -136,11 +160,12 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .chat-tab.active { color:var(--accent); border-bottom:2px solid var(--accent); background: linear-gradient(180deg, transparent, rgba(var(--accent-rgb), 0.1)); }
 .chat-tab .tab-unread { position: absolute; top: 4px; right: 4px; min-width: 14px; height: 14px; background: var(--accent); color: #000; border-radius: 7px; font-size: 9px; font-weight: bold; display: none; align-items: center; justify-content: center; padding: 0 3px; }
 .chat-logs {flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;}
-.chat-msg {font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.4;word-wrap:break-word;}
+.chat-msg {font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.45;word-wrap:break-word;padding:5px 9px;border-radius:7px;margin-bottom:2px;background:rgba(255,255,255,0.025);transition:background .15s;} .chat-msg:hover{background:rgba(255,255,255,0.06);} .chat-msg .chat-time{font-size:9px;color:var(--ink-dim);margin-right:6px;opacity:.7;} .chat-logs::-webkit-scrollbar{width:6px;} .chat-logs::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;} .chat-logs::-webkit-scrollbar-track{background:transparent;}
 .chat-msg-user {font-weight:700;margin-right:6px;}
 .chat-owner-tag { display:inline-block; font-size:8px; vertical-align:middle; background:linear-gradient(90deg, #ff8a3d, #ffd166); color:#000; padding:1px 4px; border-radius:2px; margin-right:4px; font-weight:bold; }
 .chat-admin-tag { display:inline-block; font-size:8px; vertical-align:middle; background:linear-gradient(90deg, #9d4edd, #c77dff); color:#000; padding:1px 4px; border-radius:2px; margin-right:4px; font-weight:bold; }
 .chat-member-tag { display:inline-block; font-size:8px; vertical-align:middle; background:linear-gradient(90deg, #00b4d8, #48cae4); color:#000; padding:1px 4px; border-radius:2px; margin-right:4px; font-weight:bold; }
+.chat-sys-tag { display:inline-block; font-size:8px; vertical-align:middle; background:linear-gradient(90deg,#ff4757,#ff8a8a); color:#fff; padding:1px 4px; border-radius:2px; margin-right:4px; font-weight:bold; letter-spacing:.5px;}
 .chat-typing {padding:6px 12px;font-size:11px;color:var(--accent);font-style:italic;border-top:1px solid var(--border);height:24px;display:flex;align-items:center;}
 @keyframes typingPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
 .chat-typing span { display: inline-block; animation: typingPulse 1s infinite; }
@@ -159,21 +184,27 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .console-line.error { background: linear-gradient(90deg, #ff0a54, #ff477e); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: bold; }
 #clearConsoleBtn { background: transparent; border: 1px solid var(--border); color: var(--ink-dim); border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; }
 
-#announcementBanner { position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-100%); background: linear-gradient(90deg, rgba(255,138,61,0.95), rgba(255,209,102,0.95)); color: #000; padding: 12px 24px; border-radius: 0 0 8px 8px; z-index: 50; font-weight: 700; font-family: 'Space Grotesk', sans-serif; transition: transform 0.4s; max-width: 80vw; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+#announcementBanner { position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-100%); background: linear-gradient(90deg, rgba(255,138,61,0.97), rgba(255,209,102,0.97)); color: #1a1208; padding: 12px 24px; border-radius: 0 0 8px 8px; z-index: 50; font-weight: 700; font-family: 'Space Grotesk', sans-serif; transition: transform 0.4s; max-width: 80vw; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
 #announcementBanner.show { transform: translateX(-50%) translateY(0); }
+
+#serverBanner { position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-100%); background: linear-gradient(90deg, rgba(20,6,10,.98), rgba(54,10,22,.98)); border: 1px solid var(--danger); border-top: none; color: #ffe1e5; padding: 10px 20px; border-radius: 0 0 10px 10px; z-index: 51; font-family: 'JetBrains Mono', monospace; font-size: 13px; transition: transform 0.4s; max-width: 88vw; text-align: left; box-shadow: 0 6px 22px rgba(0,0,0,0.6); display:flex; align-items:center; gap:10px; justify-content:center;}
+#serverBanner.show { transform: translateX(-50%) translateY(0); }
+#serverBanner .sb-tag { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10px; letter-spacing:1.5px; color:#fff; background:var(--danger); padding:3px 7px; border-radius:3px; text-transform:uppercase; flex-shrink:0; }
 
 #notifToast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: rgba(15,12,9,.95); border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 6px; z-index: 40; font-family: 'JetBrains Mono', monospace; font-size: 12px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 #notifToast.show { opacity: 1; }
 
 .modal { position: fixed; top:0; left:0; width:100%; height:100%; z-index:60; display:none; align-items:center; justify-content:center; }
 .modal-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.7); }
-.modal-content { position:relative; background:rgba(15,12,9,.95); border:1px solid var(--border); border-radius:8px; padding:20px; width:320px; box-shadow:0 12px 32px rgba(0,0,0,.5); pointer-events:auto; display:flex; flex-direction:column; gap:10px;}
-.modal-content h3 { margin-bottom:5px; color:var(--accent); font-family:'Space Grotesk',sans-serif; text-transform:uppercase; }
+.modal-content { position:relative; background:rgba(15,12,9,.97); border:1px solid var(--border); border-radius:10px; padding:20px; width:320px; max-width:90vw; max-height:85vh; overflow-y:auto; box-shadow:0 16px 40px rgba(0,0,0,.6); pointer-events:auto; display:flex; flex-direction:column; gap:10px;}
+.modal-content h3 { margin-bottom:2px; color:var(--accent); font-family:'Space Grotesk',sans-serif; text-transform:uppercase; letter-spacing:.5px; }
 .modal-row { display:flex; align-items:center; font-family:'JetBrains Mono',monospace; font-size:12px; }
 .modal-content textarea { width: 100%; height: 150px; resize: none; background: var(--bg); border: 1px solid var(--border); color: var(--ink); border-radius: 4px; padding: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 .modal-content button { width: 100%; }
+.modal-content p { font-size:11px; color:var(--ink-dim); line-height:1.5; }
+#purgeSelect option{padding:6px;}
 
-#wallDirectoryPanel { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(15,12,9,.95); border:1px solid var(--border); padding:20px; border-radius:8px; z-index:55; width:300px; pointer-events:auto; box-shadow:0 12px 32px rgba(0,0,0,.5); }
+#wallDirectoryPanel { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(15,12,9,.97); border:1px solid var(--border); padding:20px; border-radius:10px; z-index:55; width:300px; pointer-events:auto; box-shadow:0 16px 40px rgba(0,0,0,.6); }
 #wallDirectoryPanel h3 { margin-bottom:10px; color:var(--accent); font-family:'Space Grotesk',sans-serif; text-transform:uppercase; }
 .wall-dir-item { padding:8px; border-bottom:1px solid var(--border); cursor:pointer; display:flex; justify-content:space-between; font-size:12px; }
 .wall-dir-item:hover { background:rgba(255,255,255,0.05); }
@@ -186,19 +217,28 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 #connectSubtitle { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-dim); }
 
 @media(max-width:768px){
-  .hud-tl{top:8px;left:8px}.hud-tr{top:8px;right:8px;max-width:200px;}
+  .hud-tl{top:8px;left:8px}.hud-tr{top:8px;right:8px;max-width:46vw;}
   .hud-br{bottom:8px;right:8px}.hud-bl{bottom:8px;left:8px}
   .coord{font-size:10px;padding:5px 8px;letter-spacing:.8px;gap:6px}
   .brand{font-size:9px;letter-spacing:1.5px;padding:5px 8px;}
-  .hint{top:60px;left:16px;transform:none;text-align:left}
-  .hint h1{font-size:28px}.hint p{font-size:9px}
-  .slider-toggle{width:48px;height:48px;font-size:18px}
-  .pswatch, .fmt-btn{width:28px;height:28px}.slider-panel{bottom:56px;padding:8px;gap:6px;width:220px}
-  .chat-window {top:50px;width:280px;height:50vh;}
+  .hint{top:54px;left:16px;transform:none;text-align:left}
+  .hint h1{font-size:26px}.hint p{font-size:9px}
+  .slider-toggle{width:50px;height:50px;font-size:18px}
+  .pswatch, .fmt-btn{width:30px;height:30px}.slider-panel{bottom:58px;padding:8px;gap:6px;width:min(78vw,240px)}
+  .chat-window {top:48px;width:min(82vw,300px);height:52vh;}
   .user-chip {font-size:8px;padding:2px 5px;}
   .options-container { top: 8px; left: 8px; }
+  .options-btn{padding:7px 12px;font-size:10px}
+  .options-panel{padding:52px 12px 32px 12px}
+  .opt-head h2{font-size:17px}
   #consoleWindow { width: calc(100vw - 16px); left: 8px; bottom: 80px; }
+  .login-btn,.admin-btn,.wall-btn,.danger-btn{padding:11px;font-size:11px}
+  .opt-row{font-size:13px}
 }
+@media (prefers-reduced-motion: reduce){
+  .rcursor{transition:none}.hint h1::after,.rcursor .bar{animation:none}
+}
+#statsHud{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:21;display:none;gap:8px;pointer-events:none;}#statsHud span{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;background:rgba(15,12,9,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);padding:5px 10px;border-radius:20px;color:var(--ink-dim);display:inline-flex;align-items:center;gap:5px;text-transform:uppercase;}#statsHud b{font-size:12px;color:var(--accent);}.gs-row{display:flex;align-items:center;gap:6px;padding:7px 2px 0;border-top:1px solid var(--border);margin-top:5px;}.gs-row .pal-label{font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:1px;flex-shrink:0;}.gs-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none;min-width:60px;}.gs-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:var(--accent);border-radius:50%;cursor:pointer;}.gs-slider::-moz-range-thumb{width:14px;height:14px;background:var(--accent);border-radius:50%;cursor:pointer;border:none;}.gs-box{width:48px;background:var(--bg);border:1px solid var(--border);color:var(--ink);border-radius:4px;padding:3px;font-family:'JetBrains Mono',monospace;font-size:11px;text-align:center;outline:none;}.gs-box:focus{border-color:var(--accent);}.chat-window{border-radius:10px 0 0 10px;box-shadow:-12px 0 40px rgba(0,0,0,.5),inset 1px 0 0 rgba(var(--accent-rgb),.08);}.chat-handle{background:linear-gradient(180deg,rgba(var(--accent-rgb),.18),rgba(var(--accent-rgb),.04));}.chat-tabs{background:rgba(0,0,0,.2);}.chat-msg{border-left:2px solid transparent;}.chat-msg:hover{border-left-color:var(--accent);}#chatInput:focus{box-shadow:0 0 0 2px rgba(var(--accent-rgb),.2);}#chatSend{border-radius:6px;}
 </style>
 </head>
 <body class="theme-orange">
@@ -216,7 +256,10 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
   <p id="connectSubtitle">Please wait while the server connects.</p>
 </div>
 
+<div id="muteBadge"></div>
 <div id="announcementBanner"></div>
+<div id="serverBanner"></div>
+<div id="statsHud"><span id="fpsChip">FPS <b>0</b></span><span id="pingChip">PING <b>0</b></span></div>
 <div id="notifToast"></div>
 <div id="consoleWindow">
   <div id="consoleHeader"><span>Console</span><button id="clearConsoleBtn">Clear</button></div>
@@ -240,6 +283,16 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
   </div>
 </div>
 
+<div class="modal" id="purgeModal">
+  <div class="modal-overlay" id="purgeOverlay"></div>
+  <div class="modal-content" style="width:340px;">
+    <h3 style="color:var(--danger);">Purge Account</h3>
+    <p>Select an account to permanently delete. This removes the account <b>and all of its user walls</b>. The user will be kicked immediately. This cannot be undone.</p>
+    <select id="purgeSelect" size="7"></select>
+    <button class="danger-btn" id="purgeConfirm">Purge Selected Account</button>
+  </div>
+</div>
+
 <div class="modal" id="axotaModal">
   <div class="modal-overlay" id="axotaOverlay"></div>
   <div class="modal-content">
@@ -249,17 +302,21 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
   </div>
 </div>
 
-<div class="hud hud-tl"><div class="coord" id="coord">0,0</div></div>
+<div class="hud" style="top:12px;left:50%;transform:translateX(-50%);z-index:19;"><div class="coord" id="coord">0,0</div></div>
 <div class="hud hud-tr" id="userListContainer"></div>
 
 <div class="options-container">
-  <button class="options-btn" id="optionsBtn">Options</button>
+  <button class="options-btn" id="optionsBtn"><span class="dot"></span>Options</button>
   <div class="options-panel" id="optionsPanel">
     <button class="opt-close" id="optCloseBtn">Close</button>
     <div class="opt-inner">
+      <div class="opt-head">
+        <h2>Peria<span>wall</span></h2>
+        <span class="ver">v0.1.16</span>
+      </div>
       <div class="opt-tabs">
         <button class="opt-tab active" data-stab="general">General</button>
-        <button class="opt-tab" data-stab="admin">Admin Settings</button>
+        <button class="opt-tab" data-stab="admin">Moderation</button>
       </div>
       
       <div id="stab-general">
@@ -281,7 +338,9 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
           <div class="opt-row"><span>Font</span><select id="fontSelect"><option>JetBrains Mono</option><option>Fira Code</option><option>Source Code Pro</option><option>Roboto Mono</option><option>Space Grotesk</option><option>Monaco</option><option>Consolas</option><option>Courier New</option><option>Arial</option><option>Times New Roman</option></select></div>
         </div>
         <div class="opt-section">
-          <div class="opt-title">User Interface</div>
+          <div class="opt-title">Interface</div>
+          <div class="opt-row"><span>Performance Mode</span><div class="toggle-sw" id="perfToggle"></div></div>
+          <div class="opt-row"><span>Show Color</span><div class="toggle-sw" id="showColorToggle"></div></div>
           <div class="opt-row"><span>Old Highlight Style</span><div class="toggle-sw" id="oldHighlightToggle"></div></div>
           <div class="opt-row"><span>Show FPS</span><div class="toggle-sw" id="fpsToggle"></div></div>
           <div class="opt-row"><span>Show Ping</span><div class="toggle-sw" id="pingToggle"></div></div>
@@ -304,53 +363,77 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
           <div class="opt-title">Account</div>
           <button class="login-btn" id="loginBtn">Login / Register</button>
           <button class="logout-btn" id="logoutBtn" style="display:none;">Logout</button>
+          <button class="wall-btn" id="saveAppearanceBtn" style="display:none;">Save Appearance</button>
           <div id="userWallPanel">
+            <div class="opt-divider"></div>
             <div class="opt-title">User Wall Management</div>
             <div class="opt-row"><span>Primary Color</span><input type="color" id="wallPColor" value="#ff8a3d" style="width:40px;height:24px;background:none;border:none;cursor:pointer;"></div>
             <div class="opt-row"><span>Secondary Color</span><input type="color" id="wallSColor" value="#f4f1de" style="width:40px;height:24px;background:none;border:none;cursor:pointer;"></div>
-            <button class="admin-btn" data-admin="protect">Protect 10x10</button>
-            <button class="admin-btn" data-admin="deprotect">Deprotect 10x10</button>
-            <button class="admin-btn" data-admin="clear">Clear 10x10</button>
+            <button class="admin-btn" data-admin="protect">Protect 10x20</button>
+            <button class="admin-btn" data-admin="deprotect">Deprotect 10x20</button>
+            <button class="admin-btn" data-admin="clear">Clear 10x20</button>
             <button class="admin-btn" data-admin="wallclear">Clear This Wall</button>
           </div>
         </div>
         <div class="opt-section">
-          <div class="opt-title">Scripting & Debug</div>
+          <div class="opt-title">Scripting &amp; Debug</div>
           <button class="wall-btn" id="loadAxotaBtn">Load Axota (Mobile)</button>
           <button class="wall-btn" id="loadErudaBtn">Load Eruda</button>
         </div>
       </div>
 
       <div id="stab-admin" style="display:none;">
+        <div class="opt-section" id="colorModeSection" style="display:none;"><div class="opt-title">Global Appearance</div><div class="opt-row"><span>Color (everyone)</span><div class="toggle-sw on" id="colorModeToggle"></div></div><div style="font-size:10px;color:var(--ink-dim);margin-top:4px;">Owner/Admin toggle. Console: /color on|off</div></div>
+        <div class="opt-section" id="snapSection"><div class="opt-title">Selection</div><div class="opt-row"><span>Snap selection to tiles</span><div class="toggle-sw" id="snapToggle"></div></div></div>
         <div id="ownerPanel">
           <div class="opt-title">Owner Tools</div>
           <button class="admin-btn" data-admin="wallclear">Wall Clear All</button>
           <button class="admin-btn" id="selClearBtn">Select Clear</button>
           <button class="admin-btn" id="selProtBtn">Select Protect</button>
           <button class="admin-btn" id="selDeprotBtn">Select Deprotect</button>
-          <button class="admin-btn" id="announceBtn">Announce</button>
+          <div class="opt-divider"></div>
+          <div class="opt-title">Announcements</div>
+          <button class="admin-btn" id="announceBtn">Announce (in-app)</button>
+          <div class="opt-divider"></div>
+          <div class="opt-title">Roles</div>
           <button class="admin-btn" id="promoteBtn">Promote User</button>
+          <button class="admin-btn" id="demoteBtn">Demote User</button>
+          <div class="opt-divider"></div>
+          <div class="opt-title">Canvas Moderation</div>
+          <button class="admin-btn" id="cmMuteBtn">Canvas Mute (Permanent)</button>
+          <button class="admin-btn" id="cmTempBtn">Temp Canvas Mute</button>
+          <button class="admin-btn" id="cmUnmuteBtn">Canvas Unmute</button>
+          <div class="opt-divider"></div>
+          <div class="opt-title" style="color:var(--danger);">Danger Zone</div>
+          <button class="danger-btn" id="purgeBtn">Purge Account</button>
         </div>
         <div id="modPanel">
           <div class="opt-title">Admin Tools</div>
-          <button class="admin-btn" data-admin="protect">Protect 10x10</button>
-          <button class="admin-btn" data-admin="deprotect">Deprotect 10x10</button>
-          <button class="admin-btn" data-admin="clear">Clear 10x10</button>
+          <button class="admin-btn" data-admin="protect">Protect 10x20</button>
+          <button class="admin-btn" data-admin="deprotect">Deprotect 10x20</button>
+          <button class="admin-btn" data-admin="clear">Clear 10x20</button>
           <button class="admin-btn" id="selClearBtnA">Select Clear</button>
           <button class="admin-btn" id="selProtBtnA">Select Protect</button>
           <button class="admin-btn" id="selDeprotBtnA">Select Deprotect</button>
-          <button class="admin-btn" id="muteUserBtn">Mute User</button>
+          <div class="opt-divider"></div>
+          <div class="opt-title">User Moderation</div>
+          <button class="admin-btn" id="muteUserBtn">Mute User (Chat)</button>
+          <button class="admin-btn" id="kickBtnA">Kick User</button>
+          <div class="opt-divider"></div>
+          <div class="opt-title">Canvas Moderation</div>
+          <button class="admin-btn" id="cmTempBtnA">Temp Canvas Mute</button>
+          <button class="admin-btn" id="cmUnmuteBtnA">Canvas Unmute</button>
         </div>
         <div id="memberPanel">
           <div class="opt-title">Member Tools</div>
-          <button class="admin-btn" data-admin="protect">Protect 10x10</button>
-          <button class="admin-btn" data-admin="deprotect">Deprotect 10x10</button>
-          <button class="admin-btn" data-admin="clear">Clear 10x10</button>
+          <button class="admin-btn" data-admin="protect">Protect 10x20</button>
+          <button class="admin-btn" data-admin="deprotect">Deprotect 10x20</button>
+          <button class="admin-btn" data-admin="clear">Clear 10x20</button>
           <button class="admin-btn" id="selClearBtnM">Select Clear</button>
           <button class="admin-btn" id="selProtBtnM">Select Protect</button>
           <button class="admin-btn" id="selDeprotBtnM">Select Deprotect</button>
         </div>
-        <p id="noAdminPerms" style="font-size:11px; color:var(--ink-dim); text-align:center;">No admin permissions available.</p>
+        <p id="noAdminPerms" style="font-size:11px; color:var(--ink-dim); text-align:center; padding:20px;">No moderation permissions available. Log in to access tools.</p>
       </div>
     </div>
   </div>
@@ -400,6 +483,17 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
           <button class="pswatch" style="--c:#7bdff2" data-color="#7bdff2" data-tier="1"></button>
           <button class="pswatch" style="--c:#bdb2ff" data-color="#bdb2ff" data-tier="1"></button>
           <button class="pswatch" style="--c:#caffbf" data-color="#caffbf" data-tier="1"></button>
+          <button class="pswatch" style="--c:#ff9f1c" data-color="#ff9f1c" data-tier="1"></button>
+          <button class="pswatch" style="--c:#2ec4b6" data-color="#2ec4b6" data-tier="1"></button>
+          <button class="pswatch" style="--c:#e71d36" data-color="#e71d36" data-tier="1"></button>
+          <button class="pswatch" style="--c:#ffbf69" data-color="#ffbf69" data-tier="1"></button>
+          <button class="pswatch" style="--c:#cb997e" data-color="#cb997e" data-tier="1"></button>
+          <button class="pswatch" style="--c:#a5a58d" data-color="#a5a58d" data-tier="1"></button>
+          <button class="pswatch" style="--c:#6a4c93" data-color="#6a4c93" data-tier="1"></button>
+          <button class="pswatch" style="--c:#1982c4" data-color="#1982c4" data-tier="1"></button>
+          <button class="pswatch" style="--c:#8ac926" data-color="#8ac926" data-tier="1"></button>
+          <button class="pswatch" style="--c:#ff595e" data-color="#ff595e" data-tier="1"></button>
+          <button class="pswatch" style="--c:#ffca3a" data-color="#ffca3a" data-tier="1"></button>
           <label class="pswatch custom" title="Custom Primary" data-tier="1">
             <input type="color" id="customColor1" value="#ff8a3d"><span>1</span>
           </label>
@@ -418,13 +512,18 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
           <button class="pswatch grad-toxic" data-color="grad:toxic"></button>
           <button class="pswatch grad-gold" data-color="grad:gold"></button>
           <button class="pswatch grad-rainbow" data-color="rainbow"></button>
+          <button class="pswatch grad-candy" data-color="grad:candy"></button>
+          <button class="pswatch grad-neon" data-color="grad:neon"></button>
+          <button class="pswatch grad-fire" data-color="grad:fire"></button>
         </div>
+        <div class="gs-row"><span class="pal-label">Gradient Speed</span><input type="range" class="gs-slider" id="gradSpeedSlider" min="2" max="60" value="8"><input type="number" class="gs-box" id="gradSpeedBox" value="8"></div>
         <div class="fmt-row">
           <button class="fmt-btn" data-fmt="b"><b>B</b></button>
           <button class="fmt-btn" data-fmt="i"><i>I</i></button>
           <button class="fmt-btn" data-fmt="u" style="text-decoration:underline">U</button>
           <button class="fmt-btn" data-fmt="s" style="text-decoration:line-through">S</button>
           <button class="fmt-btn" data-fmt="o">O</button>
+          <button class="fmt-btn" data-fmt="ol" title="Overline">Ō</button>
           <button class="fmt-btn" id="toggleTier" data-tier="1">1</button>
           <button class="fmt-btn" id="undoBtn">&#x21A9;</button>
           <button class="fmt-btn" id="redoBtn">&#x21AA;</button>
@@ -437,7 +536,7 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
   </div>
 </div>
 
-<div class="hud hud-br"><div class="brand"><b>Periawall</b> 0.1.13</div></div>
+<div class="hud hud-br"><div class="brand"><b>Periawall</b> 0.1.16</div></div>
 
 <script>
 // Console Overrides
@@ -454,29 +553,34 @@ console.log = (...a) => { origLog(...a); logToConsole('log', a); };
 console.warn = (...a) => { origWarn(...a); logToConsole('warn', a); };
 console.error = (...a) => { origErr(...a); logToConsole('error', a); };
 
-const isLocal = false;
 const BASE_W=8, BASE_H=12, MAP_CX=32000, MAP_CY=48000;
 let zoom = 1.0, activeTier = 1, primaryColor = '#ff8a3d', secondaryColor = '#f4f1de', myColor = primaryColor;
 let editorFont = 'JetBrains Mono';
 let currentAccentRgb = '255,138,61';
+let currentTheme = 'orange';
 
 let originalAnonId = 'ANON-'+String(Math.floor(Math.random()*9000000)+1000000);
 let anonId = originalAnonId, isOwner = false, isAdmin = false, isMember = false;
 let currentWall = 'Main', activeChatTab = 'wall', showFps = false, showPing = false, showConsole = false, hideAnon = false, typingExpanded = false, mutedUntil = 0;
+let canvasMuted = false, canvasMutedPermanent = false, canvasMutedUntil = 0;
+let colorEnabled = true, showColor = (localStorage.getItem('showColor') !== '0');
 let currentPing = 0, lastClickCol = 0, globalOnlineCount = 0;
 let selAct = null, isSelecting = false, selStart = null, selEnd = null, justFinishedSelecting = false;
+let snapSelection = false;
 const clipboardMap = new Map();
 const areaFx = [];
 const chatUnread = { wall: 0, global: 0 };
 const savedCreds = JSON.parse(localStorage.getItem('creds') || '{}');
 
-const GRADIENTS = { sunset: ['#ff512f', '#dd2476'], ocean: ['#2193b0', '#6dd5ed'], toxic: ['#a8ff78', '#78ffd6'], gold: ['#ffd166', '#ff8a3d'] };
+const GRADIENTS = { sunset: ['#ff512f', '#dd2476'], ocean: ['#2193b0', '#6dd5ed'], toxic: ['#a8ff78', '#78ffd6'], gold: ['#ffd166', '#ff8a3d'], candy: ['#f857a6', '#ff5858'], neon: ['#08f7fe', '#09fbd3'], fire: ['#f12711', '#f5af19'] };
+let gradientSpeed = Math.max(1, parseInt(localStorage.getItem('gradientSpeed'))||8);let gradientCharIndex = 0;function mixHex(a,b,f){ const pa=[parseInt(a.slice(1,3),16),parseInt(a.slice(3,5),16),parseInt(a.slice(5,7),16)]; const pb=[parseInt(b.slice(1,3),16),parseInt(b.slice(3,5),16),parseInt(b.slice(5,7),16)]; const r=Math.round(pa[0]+(pb[0]-pa[0])*f), g=Math.round(pa[1]+(pb[1]-pa[1])*f), bl=Math.round(pa[2]+(pb[2]-pa[2])*f); return '#'+[r,g,bl].map(function(x){return ('0'+x.toString(16)).slice(-2);}).join(''); }function gradientColorAt(name, pos){ const stops=GRADIENTS[name]; if(!stops) return '#ffffff'; if(stops.length===1) return stops[0]; const p=Math.max(0,Math.min(1,pos)); const seg=p*(stops.length-1); const i=Math.min(stops.length-2,Math.floor(seg)); const f=seg-i; return mixHex(stops[i],stops[i+1],f); }function resolveGradient(color){ if(typeof color!=='string'||color.indexOf('grad:')!==0) return color; const name=color.slice(5); const pos = gradientSpeed<=1 ? 0 : (gradientCharIndex % gradientSpeed)/(gradientSpeed-1); const c = gradientColorAt(name, pos); gradientCharIndex++; return c; }
 
 const grid=new Map(), protectedTiles = new Set(), protectedAreas = new Set(), caret={col:0, row:0};
 let inputFocused=false; const ripples=[];
+const dust = Array.from({length: 70}, () => ({x:Math.random(), y:Math.random(), s:Math.random()*1.6+0.4, sp:Math.random()*0.8+0.2, ph:Math.random()*6.28}));
 const typingUsersWall = new Map(), typingUsersGlobal = new Map();
 let typingUsers = typingUsersWall, isTyping=false, typingTimeout=null, useOldHighlight = false;
-let fmt = { b:false, i:false, u:false, s:false, o:false };
+let fmt = { b:false, i:false, u:false, s:false, o:false, ol:false };
 const undoStack = [], redoStack = [];
 
 const app=document.getElementById('app'), canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d');
@@ -484,22 +588,38 @@ const cursorsEl=document.getElementById('cursors'), coordEl=document.getElementB
 const userListContainer=document.getElementById('userListContainer'), chatWindow=document.getElementById('chatWindow'), chatHandle=document.getElementById('chatHandle');
 const chatLogsWall=document.getElementById('chatLogsWall'), chatLogsGlobal=document.getElementById('chatLogsGlobal'), chatTyping=document.getElementById('chatTyping');
 const chatInput=document.getElementById('chatInput'), chatSend=document.getElementById('chatSend'), sliderToggle=document.getElementById('sliderToggle'), sliderPanel=document.getElementById('sliderPanel');
-const optionsBtn=document.getElementById('optionsBtn'), optionsPanel=document.getElementById('optionsPanel'), optCloseBtn=document.getElementById('optCloseBtn'), oldHighlightToggle=document.getElementById('oldHighlightToggle'), fpsToggle=document.getElementById('fpsToggle'), pingToggle=document.getElementById('pingToggle'), consoleToggle=document.getElementById('consoleToggle'), hideAnonToggle=document.getElementById('hideAnonToggle');
+const optionsBtn=document.getElementById('optionsBtn'), optionsPanel=document.getElementById('optionsPanel'), optCloseBtn=document.getElementById('optCloseBtn'), oldHighlightToggle=document.getElementById('oldHighlightToggle'), fpsToggle=document.getElementById('fpsToggle'), pingToggle=document.getElementById('pingToggle'), consoleToggle=document.getElementById('consoleToggle'), hideAnonToggle=document.getElementById('hideAnonToggle'), perfToggle=document.getElementById('perfToggle');
 const loginBtn=document.getElementById('loginBtn'), logoutBtn=document.getElementById('logoutBtn'), ownerPanel=document.getElementById('ownerPanel'), modPanel=document.getElementById('modPanel'), memberPanel=document.getElementById('memberPanel'), userWallPanel=document.getElementById('userWallPanel'), noAdminPerms=document.getElementById('noAdminPerms');
 const wallInput=document.getElementById('wallInput'), joinWallBtn=document.getElementById('joinWallBtn'), currentWallName=document.getElementById('currentWallName'), zoomSlider=document.getElementById('zoomSlider'), zoomVal=document.getElementById('zoomVal'), fontSelect=document.getElementById('fontSelect');
 const toggleTierBtn=document.getElementById('toggleTier'), undoBtn=document.getElementById('undoBtn'), redoBtn=document.getElementById('redoBtn'), customColor1=document.getElementById('customColor1'), customColor2=document.getElementById('customColor2');
 const gotoBtn=document.getElementById('gotoBtn'), gotoModal=document.getElementById('gotoModal'), gotoOverlay=document.getElementById('gotoOverlay'), gotoConfirm=document.getElementById('gotoConfirm'), gotoX=document.getElementById('gotoX'), gotoY=document.getElementById('gotoY');
 const wallDirectoryPanel=document.getElementById('wallDirectoryPanel'), wallDirectoryList=document.getElementById('wallDirectoryList');
-const announceBtn=document.getElementById('announceBtn'), announcementBanner=document.getElementById('announcementBanner'), muteUserBtn=document.getElementById('muteUserBtn'), promoteBtn=document.getElementById('promoteBtn');
+const announceBtn=document.getElementById('announceBtn'), announcementBanner=document.getElementById('announcementBanner'), serverBanner=document.getElementById('serverBanner'), muteUserBtn=document.getElementById('muteUserBtn'), promoteBtn=document.getElementById('promoteBtn'), demoteBtn=document.getElementById('demoteBtn'), kickBtnA=document.getElementById('kickBtnA'), purgeBtn=document.getElementById('purgeBtn');
 const connectOverlay=document.getElementById('connectOverlay'), connectTitle=document.getElementById('connectTitle'), connectSubtitle=document.getElementById('connectSubtitle'), notifToast=document.getElementById('notifToast');
 const axotaModal=document.getElementById('axotaModal'), axotaOverlay=document.getElementById('axotaOverlay'), axotaRun=document.getElementById('axotaRun'), axotaCode=document.getElementById('axotaCode'), loadAxotaBtn=document.getElementById('loadAxotaBtn');
-const consoleWindow=document.getElementById('consoleWindow'), clearConsoleBtn=document.getElementById('clearConsoleBtn');
+const consoleWindow=document.getElementById('consoleWindow'), clearConsoleBtn=document.getElementById('clearConsoleBtn'), muteBadge=document.getElementById('muteBadge');
 const chatUnreadEl=document.getElementById('chatUnread'), unreadWallEl=document.getElementById('unreadWall'), unreadGlobalEl=document.getElementById('unreadGlobal');
 const wallPColor=document.getElementById('wallPColor'), wallSColor=document.getElementById('wallSColor'), quickUserWallBtn=document.getElementById('quickUserWallBtn'), loadErudaBtn=document.getElementById('loadErudaBtn'), fsToggle=document.getElementById('fsToggle');
+const cmMuteBtn=document.getElementById('cmMuteBtn'), cmTempBtn=document.getElementById('cmTempBtn'), cmUnmuteBtn=document.getElementById('cmUnmuteBtn'), cmTempBtnA=document.getElementById('cmTempBtnA'), cmUnmuteBtnA=document.getElementById('cmUnmuteBtnA');
+const showColorToggle=document.getElementById('showColorToggle'), colorModeToggle=document.getElementById('colorModeToggle'), snapToggle=document.getElementById('snapToggle'), snapSection=document.getElementById('snapSection'), colorModeSection=document.getElementById('colorModeSection');
+const statsHud=document.getElementById('statsHud'), fpsChip=document.getElementById('fpsChip'), pingChip=document.getElementById('pingChip'), gradSpeedSlider=document.getElementById('gradSpeedSlider'), gradSpeedBox=document.getElementById('gradSpeedBox');
+const purgeModal=document.getElementById('purgeModal'), purgeOverlay=document.getElementById('purgeOverlay'), purgeSelect=document.getElementById('purgeSelect'), purgeConfirm=document.getElementById('purgeConfirm');
+const saveAppearanceBtn=document.getElementById('saveAppearanceBtn');
+
+// ---- Performance / budget-device detection ----
+let lowPerf = false, perfManual = null, rafId = null;
+function applyPerf() {
+  const mem = (navigator.deviceMemory || 8);
+  const cores = (navigator.hardwareConcurrency || 8);
+  const small = Math.min(window.screen.width || 9999, window.screen.height || 9999) < 700;
+  lowPerf = perfManual === true;
+  document.body.classList.toggle('perf-mode', lowPerf);
+  resizeCanvas();
+}
 
 let dpr = 1;
-function resizeCanvas() { dpr = Math.min(window.devicePixelRatio || 1, 2); canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr; canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px'; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-window.addEventListener('resize', resizeCanvas); resizeCanvas();
+function resizeCanvas() { const cap = lowPerf ? 1.25 : 2; dpr = Math.min(window.devicePixelRatio || 1, cap); canvas.width = Math.floor(window.innerWidth * dpr); canvas.height = Math.floor(window.innerHeight * dpr); canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px'; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+window.addEventListener('resize', () => { applyPerf(); renderRemoteCursors(); }); resizeCanvas();
 
 function hexToRgba(h,a){ if(h.startsWith('hsl')) return h.replace('hsl(', 'hsla(').replace(')', `, ${a})`); return`rgba(${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)},${a})`; }
 function updateCoord(){ coordEl.textContent=`${caret.col},${caret.row}`; }
@@ -510,6 +630,13 @@ function updateChatUnread() {
   chatUnreadEl.style.display = total > 0 && !chatWindow.classList.contains('open') ? 'flex' : 'none'; 
   unreadWallEl.textContent = chatUnread.wall; unreadWallEl.style.display = chatUnread.wall > 0 ? 'flex' : 'none';
   unreadGlobalEl.textContent = chatUnread.global; unreadGlobalEl.style.display = chatUnread.global > 0 ? 'flex' : 'none';
+}
+function updateMuteBadge() {
+  let show = false, text = '', isChat = false;
+  if (canvasMuted) { show = true; text = canvasMutedPermanent ? 'Canvas Muted (permanent)' : `Canvas Muted (${Math.max(0, Math.ceil((canvasMutedUntil - Date.now())/60000))}m)`; }
+  else if (mutedUntil > Date.now()) { show = true; isChat = true; text = `Chat Muted (${Math.max(0, Math.ceil((mutedUntil - Date.now())/60000))}m)`; }
+  if (show) { muteBadge.textContent = text; muteBadge.classList.toggle('chat', isChat); muteBadge.classList.add('show'); }
+  else { muteBadge.classList.remove('show'); }
 }
 
 function getFpsColor(fps) { if (fps <= 10) return '#ff4757'; if (fps <= 20) return '#ff8a3d'; if (fps <= 30) return '#ffd166'; if (fps <= 40) return '#06d6a0'; if (fps <= 50) return '#1b9aaa'; return '#00b4d8'; }
@@ -524,6 +651,7 @@ function applyZoom(z) {
 }
 function getFillStyle(color, x, y, w, h) { if (color.startsWith('grad:')) { const name = color.split(':')[1]; const stops = GRADIENTS[name]; if (!stops) return '#ffffff'; const grad = ctx.createLinearGradient(x, y, x + w, y); stops.forEach((c, i) => grad.addColorStop(i / (stops.length - 1), c)); return grad; } return color; }
 function getRainbowColor() { return `hsl(${(performance.now() / 10) % 360}, 100%, 50%)`; }
+function cellDrawColor(cell, x, y, w, h) { if (!(colorEnabled && showColor)) return '#f3e9d2'; if (cell.color === 'rainbow') return getRainbowColor(); return getFillStyle(cell.color, x, y, w, h); }
 
 function updateThemeRgb() { currentAccentRgb = getComputedStyle(document.body).getPropertyValue('--accent-rgb').trim() || '255,138,61'; }
 updateThemeRgb();
@@ -532,12 +660,14 @@ let lastFpsTime = performance.now(), frameCount = 0, currentFps = 0;
 function renderLoop(){
   const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom, vw = window.innerWidth, vh = window.innerHeight, scrollX = app.scrollLeft, scrollY = app.scrollTop;
   ctx.clearRect(0, 0, vw, vh);
-  const themeHueMap = { orange: 20, red: 0, green: 140, blue: 200, purple: 270, pink: 330, cyan: 190 }, theme = document.body.className.split('-')[1], hBase = themeHueMap[theme] || 20;
+  const themeHueMap = { orange: 20, red: 0, green: 140, blue: 200, purple: 270, pink: 330, cyan: 190 }, theme = (document.body.className.match(/theme-(\w+)/)||[])[1] || 'orange', hBase = themeHueMap[theme] || 20;
   const t = performance.now() / 8000;
   const gradBg = ctx.createLinearGradient(0, 0, vw, vh);
-  gradBg.addColorStop(0, `hsl(${(hBase + t * 10) % 360}, 40%, 4%)`); gradBg.addColorStop(0.5, `hsl(${(hBase + t * 10 + 20) % 360}, 40%, 7%)`); gradBg.addColorStop(1, `hsl(${(hBase + t * 10 + 40) % 360}, 40%, 4%)`);
+  gradBg.addColorStop(0, `hsl(${hBase % 360}, 42%, 4%)`); gradBg.addColorStop(0.5, `hsl(${(hBase + 18) % 360}, 45%, 7%)`); gradBg.addColorStop(1, `hsl(${(hBase + 36) % 360}, 42%, 4%)`);
   ctx.fillStyle = gradBg; ctx.fillRect(0, 0, vw, vh);
-  for(let i=0; i<3; i++) { const gx = (Math.sin(t * (2+i*0.5) + i * 2) * 0.5 + 0.5) * vw, gy = (Math.cos(t * (1.5+i*0.5) + i * 2) * 0.5 + 0.5) * vh; const radGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, vw * 0.5); radGrad.addColorStop(0, `hsla(${hBase + i*30}, 80%, 30%, 0.12)`); radGrad.addColorStop(1, 'transparent'); ctx.fillStyle = radGrad; ctx.fillRect(0,0,vw,vh); }
+  const blobCount = lowPerf ? 1 : 5;
+  for(let i=0; i<blobCount; i++) { const gx = (Math.sin(t * (2+i*0.5) + i * 2) * 0.5 + 0.5) * vw, gy = (Math.cos(t * (1.5+i*0.5) + i * 2) * 0.5 + 0.5) * vh; const radGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, vw * 0.5); radGrad.addColorStop(0, `hsla(${hBase + i*30}, 80%, 30%, 0.12)`); radGrad.addColorStop(1, 'transparent'); ctx.fillStyle = radGrad; ctx.fillRect(0,0,vw,vh); }
+  if (!lowPerf) { const _dn = performance.now(); for (let i=0;i<dust.length;i++){ const p=dust[i]; const dx=(p.x*vw + Math.sin(_dn/2400 + p.ph)*30*p.sp + vw) % vw; const dy=(p.y*vh + _dn/1400*8*p.sp + vh) % vh; ctx.fillStyle = 'rgba(' + currentAccentRgb + ',' + (0.10+0.14*Math.abs(Math.sin(_dn/1800+p.ph))) + ')'; ctx.fillRect(dx, dy, p.s, p.s); } }
   const tw = RW * 10, th = RH * 10;
   ctx.strokeStyle = 'rgba(243,233,210,0.03)'; ctx.lineWidth = 1; ctx.beginPath();
   const startCol = Math.floor(scrollX / RW), endCol = Math.ceil((scrollX + vw) / RW);
@@ -555,35 +685,38 @@ function renderLoop(){
     if (x + RW < scrollX || x > scrollX + vw || y + RH < scrollY || y > scrollY + vh) continue;
     let fontStr = ''; if (cell.b) fontStr += 'bold '; if (cell.i) fontStr += 'italic '; 
     ctx.font = fontStr + `${12 * zoom}px "${editorFont}", monospace`;
-    if (cell.o) { ctx.lineWidth = 1.5 * zoom; ctx.strokeStyle = getFillStyle(cell.color, x, y, RW, RH); ctx.strokeText(cell.ch, x, y); ctx.fillStyle = '#0a0908'; ctx.fillText(cell.ch, x, y); } 
-    else { ctx.fillStyle = getFillStyle(cell.color, x, y, RW, RH); ctx.fillText(cell.ch, x, y); }
-    if (cell.u) { ctx.fillStyle = getFillStyle(cell.color, x, y, RW, RH); ctx.fillRect(x, y + (12 * zoom) - 2, RW, 1); }
-    if (cell.s) { ctx.fillStyle = getFillStyle(cell.color, x, y, RW, RH); ctx.fillRect(x, y + (12 * zoom) * 0.4, RW, 1); }
+    if (cell.o) { ctx.lineWidth = 1.5 * zoom; ctx.strokeStyle = cellDrawColor(cell, x, y, RW, RH); ctx.strokeText(cell.ch, x, y); ctx.fillStyle = '#0a0908'; ctx.fillText(cell.ch, x, y); } 
+    else { ctx.fillStyle = cellDrawColor(cell, x, y, RW, RH); ctx.fillText(cell.ch, x, y); }
+    if (cell.u) { ctx.fillStyle = cellDrawColor(cell, x, y, RW, RH); ctx.fillRect(x, y + (12 * zoom) - 2, RW, 1); }
+    if (cell.s) { ctx.fillStyle = cellDrawColor(cell, x, y, RW, RH); ctx.fillRect(x, y + (12 * zoom) * 0.4, RW, 1); } if (cell.ol) { ctx.fillStyle = cellDrawColor(cell, x, y, RW, RH); ctx.fillRect(x, y, RW, 1); }
   }
 
-  for (const key of protectedTiles) { const [tx, ty] = key.split(',').map(Number); const c0 = tx * 10 - 4000, r0 = ty * 10 - 4000; const x = CX + c0 * RW, y = CY + r0 * RH, w = 10 * RW, h = 10 * RH; if (x + w < scrollX || x > scrollX + vw || y + h < scrollY || y > scrollY + vh) continue; ctx.fillStyle = 'rgba(239, 71, 111, 0.05)'; ctx.fillRect(x, y, w, h); ctx.strokeStyle = 'rgba(239, 71, 111, 0.4)'; ctx.lineWidth = 1; ctx.setLineDash([6, 6]); ctx.strokeRect(x, y, w, h); ctx.setLineDash([]); }
-  for (const area of protectedAreas) { const [c1, r1, c2, r2] = area.split(',').map(Number); const x = CX + c1 * RW, y = CY + r1 * RH, w = (c2-c1+1) * RW, h = (r2-r1+1) * RH; if (x + w < scrollX || x > scrollX + vw || y + h < scrollY || y > scrollY + vh) continue; ctx.fillStyle = 'rgba(0, 180, 216, 0.05)'; ctx.fillRect(x, y, w, h); ctx.strokeStyle = 'rgba(0, 180, 216, 0.5)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.strokeRect(x, y, w, h); ctx.setLineDash([]); }
+  for (const key of protectedTiles) { const [tx, ty] = key.split(',').map(Number); const c0 = tx * 10 - 4000, r0 = ty * 20 - 4000; const x = CX + c0 * RW, y = CY + r0 * RH, w = 10 * RW, h = 20 * RH; if (x + w < scrollX || x > scrollX + vw || y + h < scrollY || y > scrollY + vh) continue; const pulse = 0.5 + 0.5*Math.sin(performance.now()/600); ctx.fillStyle = `rgba(239, 71, 111, ${0.04 + 0.06*pulse})`; ctx.fillRect(x, y, w, h); ctx.strokeStyle = `rgba(239, 71, 111, ${0.4 + 0.4*pulse})`; ctx.lineWidth = 1.5; ctx.setLineDash([8, 5]); ctx.lineDashOffset = -performance.now()/40; ctx.strokeRect(x, y, w, h); ctx.setLineDash([]); ctx.lineDashOffset = 0; }
+  for (const area of protectedAreas) { const [c1, r1, c2, r2] = area.split(',').map(Number); const x = CX + c1 * RW, y = CY + r1 * RH, w = (c2-c1+1) * RW, h = (r2-r1+1) * RH; if (x + w < scrollX || x > scrollX + vw || y + h < scrollY || y > scrollY + vh) continue; const pulse = 0.5 + 0.5*Math.sin(performance.now()/600); ctx.fillStyle = `rgba(0, 180, 216, ${0.04 + 0.05*pulse})`; ctx.fillRect(x, y, w, h); ctx.strokeStyle = `rgba(72, 202, 228, ${0.4 + 0.4*pulse})`; ctx.lineWidth = 1.5; ctx.setLineDash([8, 5]); ctx.lineDashOffset = -performance.now()/40; ctx.strokeRect(x, y, w, h); ctx.setLineDash([]); ctx.lineDashOffset = 0; }
   ctx.strokeStyle = 'rgba(255, 138, 61, 0.25)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.strokeRect(CX - 2, CY - 2, RW + 4, RH + 4); ctx.setLineDash([]);
   
   const now = performance.now();
   for(let i=ripples.length-1;i>=0;i--){ const r=ripples[i], elapsed=now-r.start; if(elapsed>600){ ripples.splice(i,1); continue; } const t=elapsed/600; const cx=CX+r.col*RW+RW/2, cy=CY+r.row*RH+RH/2; ctx.strokeStyle=hexToRgba(r.color.startsWith('#')?r.color:'#ffffff',(1-t)*0.55); ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(cx,cy, RW*(0.4+t*1.8), 0, Math.PI*2); ctx.stroke(); }
-  for(let i=areaFx.length-1;i>=0;i--){ const fx=areaFx[i], elapsed=now-fx.start; if(elapsed>800){ areaFx.splice(i,1); continue; } const t=elapsed/800; ctx.fillStyle = `rgba(255, 138, 61, ${0.3 * (1-t)})`; ctx.fillRect(fx.x1, fx.y1, fx.x2-fx.x1, fx.y2-fx.y1); ctx.strokeStyle = `rgba(255, 138, 61, ${1-t})`; ctx.lineWidth = 2; ctx.strokeRect(fx.x1, fx.y1, fx.x2-fx.x1, fx.y2-fx.y1); }
+  for(let i=areaFx.length-1;i>=0;i--){ const fx=areaFx[i], elapsed=now-fx.start; if(elapsed>900){ areaFx.splice(i,1); continue; } const t=elapsed/900; const aw=fx.x2-fx.x1, ah=fx.y2-fx.y1; ctx.fillStyle = `rgba(255, 138, 61, ${0.22 * (1-t)})`; ctx.fillRect(fx.x1, fx.y1, aw, ah); ctx.strokeStyle = `rgba(255, 209, 102, ${(1-t)*0.95})`; ctx.lineWidth = 2 + 2*(1-t); ctx.strokeRect(fx.x1, fx.y1, aw, ah); const ex = Math.max(aw, ah) * (0.12 + t*0.5); ctx.strokeStyle = `rgba(255, 138, 61, ${(1-t)*0.55})`; ctx.lineWidth = 2; ctx.strokeRect(fx.x1 - ex, fx.y1 - ex, aw + ex*2, ah + ex*2); }
   if (isSelecting && selStart && selEnd) { const x1 = CX + Math.min(selStart.col, selEnd.col) * RW, y1 = CY + Math.min(selStart.row, selEnd.row) * RH, x2 = CX + (Math.max(selStart.col, selEnd.col) + 1) * RW, y2 = CY + (Math.max(selStart.row, selEnd.row) + 1) * RH; ctx.fillStyle = 'rgba(255, 138, 61, 0.1)'; ctx.fillRect(x1, y1, x2 - x1, y2 - y1); ctx.strokeStyle = 'var(--accent)'; ctx.lineWidth = 2; ctx.strokeRect(x1, y1, x2 - x1, y2 - y1); }
   const cx=CX+caret.col*RW, cy=CY+caret.row*RH;
   if(inputFocused && !isSelecting){ const pulse=0.5+0.5*Math.sin(now/350); ctx.fillStyle=hexToRgba(myColor.startsWith('#')?myColor:'#ffffff', 0.10+0.07*pulse); ctx.fillRect(cx,cy,RW,RH); ctx.strokeStyle=hexToRgba(myColor.startsWith('#')?myColor:'#ffffff', 0.65+0.25*pulse); ctx.lineWidth=2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(cx-1,cy+5); ctx.lineTo(cx-1,cy-1); ctx.lineTo(cx+5,cy-1); ctx.moveTo(cx+RW-5,cy-1); ctx.lineTo(cx+RW+1,cy-1); ctx.lineTo(cx+RW+1,cy+5); ctx.moveTo(cx+RW+1,cy+RH-5); ctx.lineTo(cx+RW+1,cy+RH+1); ctx.lineTo(cx+RW-5,cy+RH+1); ctx.moveTo(cx+5,cy+RH+1); ctx.lineTo(cx-1,cy+RH+1); ctx.lineTo(cx-1,cy+RH-5); ctx.stroke(); if(Math.floor(now/530)%2===0){ ctx.fillStyle=myColor.startsWith('#')?myColor:'#ffffff'; ctx.fillRect(cx, cy+2, 2, RH-4); } } else if (!isSelecting) { ctx.fillStyle=hexToRgba(myColor.startsWith('#')?myColor:'#ffffff',0.05); ctx.fillRect(cx,cy,RW,RH); ctx.strokeStyle=hexToRgba(myColor.startsWith('#')?myColor:'#ffffff',0.28); ctx.lineWidth=2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(cx-1,cy+5); ctx.lineTo(cx-1,cy-1); ctx.lineTo(cx+5,cy-1); ctx.moveTo(cx+RW-5,cy-1); ctx.lineTo(cx+RW+1,cy-1); ctx.lineTo(cx+RW+1,cy+5); ctx.moveTo(cx+RW+1,cy+RH-5); ctx.lineTo(cx+RW+1,cy+RH+1); ctx.lineTo(cx+RW-5,cy+RH+1); ctx.moveTo(cx+5,cy+RH+1); ctx.lineTo(cx-1,cy+RH+1); ctx.lineTo(cx-1,cy+RH-5); ctx.stroke(); }
   ctx.restore();
+  const _vg = ctx.createRadialGradient(vw/2, vh/2, Math.min(vw,vh)*0.32, vw/2, vh/2, Math.max(vw,vh)*0.8); _vg.addColorStop(0, 'rgba(0,0,0,0)'); _vg.addColorStop(1, 'rgba(0,0,0,0.5)'); ctx.fillStyle = _vg; ctx.fillRect(0,0,vw,vh);
   if (showFps) { frameCount++; if (now - lastFpsTime >= 1000) { currentFps = frameCount; frameCount = 0; lastFpsTime = now; } }
-  if (showFps || showPing) { let txt = ''; if (showFps) txt += `FPS: ${currentFps}`; if (showFps && showPing) txt += ' | '; if (showPing) txt += `Ping: ${currentPing}ms`; ctx.font = '12px "JetBrains Mono", monospace'; let xOff = 10; const w = ctx.measureText(txt).width; ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(xOff-4, 44, w+8, 18); if (showFps) { ctx.fillStyle = getFpsColor(currentFps); ctx.fillText(`FPS: ${currentFps}`, xOff, 48); xOff += ctx.measureText(`FPS: ${currentFps}`).width; } if (showFps && showPing) { ctx.fillStyle = '#fff'; ctx.fillText(' | ', xOff, 48); xOff += ctx.measureText(' | ').width; } if (showPing) { ctx.fillStyle = getPingColor(currentPing); ctx.fillText(`Ping: ${currentPing}ms`, xOff, 48); } }
-  requestAnimationFrame(renderLoop);
+  if (showFps || showPing) { statsHud.style.display = 'flex'; fpsChip.style.display = showFps ? 'inline-flex' : 'none'; pingChip.style.display = showPing ? 'inline-flex' : 'none'; if (showFps) { const fb = fpsChip.querySelector('b'); fb.textContent = currentFps; fb.style.color = getFpsColor(currentFps); } if (showPing) { const pb = pingChip.querySelector('b'); pb.textContent = currentPing + 'ms'; pb.style.color = getPingColor(currentPing); } } else { statsHud.style.display = 'none'; }
+  rafId = requestAnimationFrame(renderLoop);
 }
-function getTileKey(col, row) { return `${Math.floor((col+4000)/10)},${Math.floor((row+4000)/10)}`; }
-function canEdit(col, row) { if (currentWall === 'walls') return false; if (Date.now() < mutedUntil) return false; if (isOwner || isAdmin) return true; const isWallOwner = currentWall === '~' + anonId; if (isWallOwner) return true; if (isMember && currentWall === 'Main') return true; if (protectedTiles.has(getTileKey(col, row))) return false; for (const a of protectedAreas) { const [ac1, ar1, ac2, ar2] = a.split(',').map(Number); if (col >= ac1 && col <= ac2 && row >= ar1 && row <= ar2) return false; } return true; }
+document.addEventListener('visibilitychange', () => { if (document.hidden) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } } else if (!rafId) { lastFpsTime = performance.now(); rafId = requestAnimationFrame(renderLoop); } });
+function getTileKey(col, row) { return `${Math.floor((col+4000)/10)},${Math.floor((row+4000)/20)}`; }
+const snapTile = v => snapSelection ? Math.round(v/10)*10 : v;
+function canEdit(col, row) { if (currentWall === 'walls') return false; if (canvasMuted) return false; if (Date.now() < mutedUntil) return false; if (isOwner || isAdmin) return true; const isWallOwner = currentWall === '~' + anonId; if (isWallOwner) return true; if (isMember && currentWall === 'Main') return true; if (protectedTiles.has(getTileKey(col, row))) return false; for (const a of protectedAreas) { const [ac1, ar1, ac2, ar2] = a.split(',').map(Number); if (col >= ac1 && col <= ac2 && row >= ar1 && row <= ar2) return false; } return true; }
 function placeCaretFromPixel(px,py){ const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; let col = Math.round((px - CX) / RW), row = Math.round((py - CY) / RH); caret.col = Math.max(-4000, Math.min(3999, col)); caret.row = Math.max(-4000, Math.min(3999, row)); lastClickCol = caret.col; updateCoord(); ensureCaretVisible(); broadcastCursor(); hint.classList.add('hide'); }
 function ensureCaretVisible() { const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; const px = CX + caret.col * RW, py = CY + caret.row * RH; const margin = 50; let sx = app.scrollLeft, sy = app.scrollTop; if (px < sx + margin) sx = px - margin; else if (px > sx + window.innerWidth - margin) sx = px - window.innerWidth + margin; if (py < sy + margin) sy = py - margin; else if (py > sy + window.innerHeight - margin) sy = py - window.innerHeight + margin; app.scrollTo(sx, sy); }
 function moveCaret(dc,dr){ caret.col=Math.max(-4000,Math.min(3999,caret.col+dc)); caret.row=Math.max(-4000,Math.min(3999,caret.row+dr)); ensureCaretVisible(); updateCoord(); broadcastCursor(); }
 function advanceCaret(){ caret.col++; if(caret.col>3999){ caret.col=-4000; caret.row=Math.min(3999,caret.row+1); } ensureCaretVisible(); updateCoord(); broadcastCursor(); }
 function typeChar(ch){ if (!canEdit(caret.col, caret.row)) return; typeCharAt(caret.col, caret.row, ch, myColor); advanceCaret(); hint.classList.add('hide'); }
-function typeCharAt(col, row, ch, color, recordHistory = true, decoOverride = null) { if (!canEdit(col, row)) return; const key = `${col},${row}`, t = Date.now(); const prev = grid.get(key) || null; const cellFmt = decoOverride || fmt; let actualColor = color; if (actualColor === 'rainbow') actualColor = getRainbowColor(); grid.set(key, {ch, color: actualColor, t, ...cellFmt}); ripples.push({col, row, color: actualColor, start: performance.now()}); broadcastCell(col, row, ch, actualColor, t, cellFmt); if (recordHistory) { undoStack.push({act: 'set', col, row, next: {ch, color: actualColor, t, ...cellFmt}, prev}); redoStack.length = 0; } }
+function typeCharAt(col, row, ch, color, recordHistory = true, decoOverride = null) { if (!canEdit(col, row)) return; color = resolveGradient(color); const key = `${col},${row}`, t = Date.now(); const prev = grid.get(key) || null; const cellFmt = decoOverride || fmt; grid.set(key, {ch, color, t, ...cellFmt}); ripples.push({col, row, color, start: performance.now()}); broadcastCell(col, row, ch, color, t, cellFmt); if (recordHistory) { undoStack.push({act: 'set', col, row, next: {ch, color, t, ...cellFmt}, prev}); redoStack.length = 0; } }
 function clearCharAt(col, row, recordHistory = true) { if (!canEdit(col, row)) return; const key = `${col},${row}`; if (grid.has(key)) { const prev = grid.get(key); grid.delete(key); broadcastClear(col, row); if (recordHistory) { undoStack.push({act: 'clear', col, row, next: null, prev}); redoStack.length = 0; } } }
 function backspace(){ if(caret.col===-4000&&caret.row===-4000) return; caret.col--; if(caret.col<-4000){ caret.row--; caret.col=3999; } if (!canEdit(caret.col, caret.row)) return; clearCharAt(caret.col, caret.row); ensureCaretVisible(); updateCoord(); broadcastCursor(); }
 function enterAction(){ const dx = lastClickCol - caret.col; moveCaret(dx, 1); }
@@ -594,6 +727,8 @@ window.spawnChar = function(str, color) { for (let i=0; i<str.length; i++) { if 
 window.spawnCharXY = function(str, x, y, color) { let cx = x, cy = y; for (let i=0; i<str.length; i++) { if (str[i] >= ' ') { typeCharAt(cx, cy, str[i], color || myColor); cx++; if (cx > 3999) { cx = -4000; cy++; } } else if (str[i] === '\n') { cy++; cx = x; } } };
 window.spawnDecoChar = function(str, color, deco) { for (let i=0; i<str.length; i++) { if (str[i] >= ' ') { typeCharAt(caret.col, caret.row, str[i], color || myColor, true, deco); advanceCaret(); } else if (str[i] === '\n') enterAction(); } };
 window.spawnDecoCharXY = function(str, x, y, color, deco) { let cx = x, cy = y; for (let i=0; i<str.length; i++) { if (str[i] >= ' ') { typeCharAt(cx, cy, str[i], color || myColor, true, deco); cx++; if (cx > 3999) { cx = -4000; cy++; } } else if (str[i] === '\n') { cy++; cx = x; } } };
+function areaFxPush(c1,r1,c2,r2){ const RW=BASE_W*zoom,RH=BASE_H*zoom,CX=MAP_CX*zoom,CY=MAP_CY*zoom; areaFx.push({x1:CX+c1*RW,y1:CY+r1*RH,x2:CX+(c2+1)*RW,y2:CY+(r2+1)*RH,start:performance.now()}); }
+window.dynamicSelect = function(x, y, char, event, w, h) { x=Math.round(x||0); y=Math.round(y||0); const W=Math.max(1,Math.round(w||10)), H=Math.max(1,Math.round(h||20)); const c1=x, r1=y, c2=x+W-1, r2=y+H-1; if (event==='prt'||event==='protect') { protectedAreas.add(`${c1},${r1},${c2},${r2}`); sendMsg({type:'areadmin', id:anonId, act:'areaprotect', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='dprt'||event==='deprotect') { const rem=[]; for(const a of protectedAreas){ const aa=a.split(',').map(Number); if(Math.max(aa[0],c1)<=Math.min(aa[2],c2)&&Math.max(aa[1],r1)<=Math.min(aa[3],r2)) rem.push(a);} rem.forEach(function(a){protectedAreas.delete(a);}); sendMsg({type:'areadmin', id:anonId, act:'areadeprotect', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='clr'||event==='clear') { for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) grid.delete(`${c},${r}`); sendMsg({type:'areadmin', id:anonId, act:'areaclear', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='write') { const fc=(typeof char==='string'?char:String(char||'X'))[0]||'X'; for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) typeCharAt(c,r,fc,myColor,true); } else if (event==='writeBox') { let bc=char; if(typeof bc==='string') bc=bc.split(''); const top=bc[0]||'-', down=bc[1]||'-', left=bc[2]||'|', right=bc[3]||'|'; for(let c=c1;c<=c2;c++){ typeCharAt(c,r1,top,myColor,true); typeCharAt(c,r2,down,myColor,true); } for(let r=r1;r<=r2;r++){ typeCharAt(c1,r,left,myColor,true); typeCharAt(c2,r,right,myColor,true); } } };
 
 let ws, isConnected = false;
 function setConnectState(state) { 
@@ -614,24 +749,37 @@ function connect() {
     if (m.target && m.target !== anonId) return; if (m.id === anonId) return;
     if (m.type === 'pong' && m.target === anonId) { currentPing = Date.now() - m.t; return; }
     if (m.type === 'online-count') { globalOnlineCount = m.count; return; }
-    if (m.type === 'chat-history' && m.target === anonId) { chatLogsWall.innerHTML = ''; m.messages.forEach(msg => addChatMessage('wall', msg.id, msg.anon, msg.color, msg.text, msg.t, msg.isOwner, msg.isAdmin, msg.isMember)); return; }
-    if (m.type === 'login-result') { if (m.success) { anonId = m.username; isOwner = m.isOwner; isAdmin = m.isAdmin; isMember = m.isMember; if (m.p) { primaryColor = m.p; customColor1.value = m.p; wallPColor.value = m.p; } if (m.s) { secondaryColor = m.s; customColor2.value = m.s; wallSColor.value = m.s; } myColor = activeTier === 1 ? primaryColor : secondaryColor; checkLoginState(); renderPresence(); broadcastCursor(); sendMsg({type:'hello', id:anonId}); } else { localStorage.removeItem('creds'); alert(m.err); sendMsg({type:'hello', id:anonId}); } return; }
+    if (m.type === 'chat-history' && m.target === anonId) { if (m.scope === 'global') { chatLogsGlobal.innerHTML = ''; (m.messages || []).forEach(msg => addChatMessage('global', msg.id, msg.anon, msg.color, msg.text, msg.t, msg.isOwner, msg.isAdmin, msg.isMember)); } else { chatLogsWall.innerHTML = ''; (m.messages || []).forEach(msg => addChatMessage('wall', msg.id, msg.anon, msg.color, msg.text, msg.t, msg.isOwner, msg.isAdmin, msg.isMember)); } return; }
+    if (m.type === 'login-result') { if (m.success) { anonId = m.username; isOwner = m.isOwner; isAdmin = m.isAdmin; isMember = m.isMember; if (m.p) { primaryColor = m.p; customColor1.value = m.p; wallPColor.value = m.p; } if (m.s) { secondaryColor = m.s; customColor2.value = m.s; wallSColor.value = m.s; } if (m.theme) { currentTheme = m.theme; document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === currentTheme)); document.body.className = (lowPerf ? 'perf-mode ' : '') + 'theme-' + currentTheme; updateThemeRgb(); } myColor = activeTier === 1 ? primaryColor : secondaryColor; checkLoginState(); renderPresence(); broadcastCursor(); sendMsg({type:'hello', id:anonId}); } else { localStorage.removeItem('creds'); alert(m.err); sendMsg({type:'hello', id:anonId}); } return; }
     if (m.type === 'system-msg' && m.target === anonId) { alert(m.text); return; }
     if (m.type === 'wall-list') { showWallDirectory(m.walls); return; }
     if (m.type === 'announce') { showAnnouncement(m.text); return; }
+    if (m.type === 'server-announce') { showServerAnnouncement(m.text); return; }
     if (m.type === 'mute' && m.targetUser === anonId) { applyMute(m.expires); return; }
+    if (m.type === 'unmute' && m.targetUser === anonId) { mutedUntil = 0; updateMuteBadge(); showToast('You are no longer chat-muted.'); return; }
+    if (m.type === 'canvasmute') { if (m.targetUser === anonId) { applyCanvasMute(m); } else if (m.targetUser) { showToast(`${m.targetUser} was canvas-muted${m.permanent ? ' (permanent)' : (m.minutes ? ` (${m.minutes}m)` : '')}.`); } return; }
+    if (m.type === 'color-mode') { colorEnabled = m.enabled !== false; if (colorModeToggle) colorModeToggle.classList.toggle('on', colorEnabled); return; }
+    if (m.type === 'purgeall') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); showToast('Server wiped: ' + (m.reason || 'all walls and users')); setTimeout(() => location.reload(), 1500); return; }
+    if (m.type === 'canvasunmute') { if (m.targetUser === anonId) { clearCanvasMute(); } else if (m.targetUser) { showToast(`${m.targetUser} was canvas-unmuted.`); } return; }
+    if (m.type === 'demote' && m.targetUser === anonId) { isAdmin = false; isMember = false; checkLoginState(); renderPresence(); alert('Your admin/member roles have been removed.'); return; }
+    if (m.type === 'kick' && m.targetUser === anonId) { alert('You have been kicked.'); return; }
+    if (m.type === 'kicked' && m.targetUser === anonId) { handleKicked(); return; }
+    if (m.type === 'purge-result' && m.target === anonId) { showToast(m.success ? `Purged ${m.targetUser}.` : `${m.targetUser} not found.`); return; }
+    if (m.type === 'purged' && m.targetUser === anonId) { handlePurged(); return; }
+    if (m.type === 'purge' && m.targetUser) { showToast(`${m.targetUser} was purged by the owner.`); return; }
+    if (m.type === 'users-response' && m.target === anonId) { populatePurge(m.users); return; }
     if (m.type === 'nick' && m.oldId) { if (anonId === m.oldId) { anonId = m.newId; checkLoginState(); renderPresence(); broadcastCursor(); } if (peers.has(m.oldId)) { const p = peers.get(m.oldId); peers.delete(m.oldId); p.anon = m.newId; peers.set(m.id, p); renderRemoteCursors(); renderPresence(); } }
     if (m.type === 'promote' && m.targetUser === anonId) { if(m.role==='admin'){isAdmin=true;} if(m.role==='member'){isMember=true;} checkLoginState(); renderPresence(); alert(`You have been promoted to ${m.role}!`); }
     if (m.type === 'hello' && m.id === 'system') return;
-    if (m.type === 'sync' && m.id === 'system') { for(const[col,row,ch,color,t,b,i,u,s,o] of m.cells){ const k=`${col},${row}`, ex=grid.get(k); if(!ex||t>=ex.t){ grid.set(k,{ch,color,t,b,i,u,s,o}); } } m.protectedTiles.forEach(pt => protectedTiles.add(pt)); (m.protectedAreas || []).forEach(pa => protectedAreas.add(pa.join(','))); return; }
+    if (m.type === 'sync' && m.id === 'system') { for(const[col,row,ch,color,t,b,i,u,s,o,ol] of m.cells){ const k=`${col},${row}`, ex=grid.get(k); if(!ex||t>=ex.t){ grid.set(k,{ch,color,t,b,i,u,s,o,ol}); } } m.protectedTiles.forEach(pt => protectedTiles.add(pt)); (m.protectedAreas || []).forEach(pa => protectedAreas.add(pa.join(','))); return; }
     switch(m.type){
       case'cursor': peers.set(m.id,{anon:m.anon,color:m.color,col:m.col,row:m.row,isOwner:m.isOwner,isAdmin:m.isAdmin,isMember:m.isMember,lastSeen:Date.now()}); renderRemoteCursors(); renderPresence(); break;
-      case'cell':{ const k=`${m.col},${m.row}`, ex=grid.get(k); if(!ex||m.t>=ex.t){ grid.set(k,{ch:m.ch,color:m.color,t:m.t,b:m.fmt.b,i:m.fmt.i,u:m.fmt.u,s:m.fmt.s,o:m.fmt.o}); ripples.push({col:m.col,row:m.row,color:m.color,start:performance.now()}); } break; }
+      case'cell':{ const k=`${m.col},${m.row}`, ex=grid.get(k); if(!ex||m.t>=ex.t){ grid.set(k,{ch:m.ch,color:m.color,t:m.t,b:m.fmt.b,i:m.fmt.i,u:m.fmt.u,s:m.fmt.s,o:m.fmt.o,ol:m.fmt.ol}); ripples.push({col:m.col,row:m.row,color:m.color,start:performance.now()}); } break; }
       case'clear':{ const k=`${m.col},${m.row}`, ex=grid.get(k); if(ex&&m.t>=ex.t){ grid.delete(k); } break; }
       case'bye': peers.delete(m.id); typingUsersWall.delete(m.id); renderRemoteCursors(); renderPresence(); updateTypingIndicator(); break;
       case 'chat-message': if (m.scope === 'global') addChatMessage('global', m.id, m.anon, m.color, m.text, m.t, m.isOwner, m.isAdmin, m.isMember); else addChatMessage('wall', m.id, m.anon, m.color, m.text, m.t, m.isOwner, m.isAdmin, m.isMember); break;
       case 'chat-typing': { const map = m.scope === 'global' ? typingUsersGlobal : typingUsersWall; if (m.isTyping) map.set(m.id, m.anon); else map.delete(m.id); if (map === typingUsers) updateTypingIndicator(); break; }
-      case 'admin': if (m.act === 'protect') protectedTiles.add(`${m.col},${m.row}`); else if (m.act === 'deprotect') protectedTiles.delete(`${m.col},${m.row}`); else if (m.act === 'clear') { const c0 = m.col*10-4000, r0 = m.col*10-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+10)*RW, y2: CY+(r0+10)*RH, start: performance.now()}); for(let r=0; r<10; r++) for(let c=0; c<10; c++) grid.delete(`${m.col*10+c-4000},${m.row*10+r-4000}`); } else if (m.act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } break;
+      case 'admin': if (m.act === 'protect') protectedTiles.add(`${m.col},${m.row}`); else if (m.act === 'deprotect') protectedTiles.delete(`${m.col},${m.row}`); else if (m.act === 'clear') { const c0 = m.col*10-4000, r0 = m.row*20-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+10)*RW, y2: CY+(r0+20)*RH, start: performance.now()}); for(let r=0; r<20; r++) for(let c=0; c<10; c++) grid.delete(`${m.col*10+c-4000},${m.row*20+r-4000}`); } else if (m.act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } break;
       case 'areadmin': {
         const c1 = Math.min(m.c1, m.c2), c2 = Math.max(m.c1, m.c2), r1 = Math.min(m.r1, m.r2), r2 = Math.max(m.r1, m.r2); 
         const RWfx = BASE_W * zoom, RHfx = BASE_H * zoom, CXfx = MAP_CX * zoom, CYfx = MAP_CY * zoom; areaFx.push({x1: CXfx+c1*RWfx, y1: CYfx+r1*RHfx, x2: CXfx+(c2+1)*RWfx, y2: CYfx+(r2+1)*RHfx, start: performance.now()}); 
@@ -662,13 +810,13 @@ chatInput.addEventListener('input', () => { if (Date.now() < mutedUntil) return;
 chatSend.addEventListener('click', sendChat);
 chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendChat(); } });
 function sendChat() { if (Date.now() < mutedUntil) return alert("You are muted and cannot send messages."); const text = chatInput.value.trim(); if (!text) return; const t = Date.now(); if (text.startsWith('/nick')) { const parts = text.split(' '); const newNick = parts.length > 1 ? parts.slice(1).join(' ').trim() : ''; if (newNick === '') { sendMsg({type:'nick', id: Math.random().toString(36).substr(2,5), oldId: anonId, newId: originalAnonId}); anonId = originalAnonId; } else { sendMsg({type:'nick', id: Math.random().toString(36).substr(2,5), oldId: anonId, newId: newNick}); anonId = newNick; } checkLoginState(); renderPresence(); broadcastCursor(); chatInput.value = ''; return; } const scope = activeChatTab; sendMsg({type:'chat-message', id:anonId, anon:anonId, color:myColor, text, t, scope}); addChatMessage(scope, anonId, anonId, myColor, text, t, isOwner, isAdmin, isMember); chatInput.value = ''; if (isTyping) { isTyping = false; sendMsg({type:'chat-typing', id:anonId, anon:anonId, isTyping:false, scope}); clearTimeout(typingTimeout); } }
-function addChatMessage(scope, id, anon, color, text, t, isOwner, isAdmin, isMember) { const msg = document.createElement('div'); msg.className = 'chat-msg'; let userStyle = `color:${color.startsWith('#')?color:'#ffffff'}`; if (isOwner) userStyle = 'background: linear-gradient(90deg, #ff8a3d, #ffd166); -webkit-background-clip: text; background-clip: text; color: transparent;'; if (isAdmin && !isOwner) userStyle = 'background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; background-clip: text; color: transparent;'; if (isMember && !isOwner && !isAdmin) userStyle = 'background: linear-gradient(90deg, #00b4d8, #48cae4); -webkit-background-clip: text; background-clip: text; color: transparent;'; let userHtml = ''; let displayName = anon; if (hideAnon && displayName.startsWith('ANON-')) displayName = 'Anon'; if (isOwner) userHtml += '<span class="chat-owner-tag">Owner</span>'; if (isAdmin && !isOwner) userHtml += '<span class="chat-admin-tag">Admin</span>'; if (isMember && !isOwner && !isAdmin) userHtml += '<span class="chat-member-tag">Member</span>'; userHtml += `<span class="chat-msg-user" style="${userStyle}">${displayName}</span>`; msg.innerHTML = userHtml + `<span class="chat-msg-text"></span>`; msg.querySelector('.chat-msg-text').textContent = text; const logs = scope === 'wall' ? chatLogsWall : chatLogsGlobal; logs.appendChild(msg); logs.scrollTop = logs.scrollHeight; if (!chatWindow.classList.contains('open') || activeChatTab !== scope) { chatUnread[scope]++; updateChatUnread(); } }
+function addChatMessage(scope, id, anon, color, text, t, isOwner, isAdmin, isMember, sysTag) { const msg = document.createElement('div'); msg.className = 'chat-msg'; let userStyle = `color:${color.startsWith('#')?color:'#ffffff'}`; if (isOwner) userStyle = 'background: linear-gradient(90deg, #ff8a3d, #ffd166); -webkit-background-clip: text; background-clip: text; color: transparent;'; if (isAdmin && !isOwner) userStyle = 'background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; background-clip: text; color: transparent;'; if (isMember && !isOwner && !isAdmin) userStyle = 'background: linear-gradient(90deg, #00b4d8, #48cae4); -webkit-background-clip: text; background-clip: text; color: transparent;'; let userHtml = ''; let displayName = anon; if (hideAnon && displayName.startsWith('ANON-')) displayName = 'Anon'; if (sysTag) userHtml += '<span class="chat-sys-tag">'+sysTag+'</span>'; else { if (isOwner) userHtml += '<span class="chat-owner-tag">Owner</span>'; if (isAdmin && !isOwner) userHtml += '<span class="chat-admin-tag">Admin</span>'; if (isMember && !isOwner && !isAdmin) userHtml += '<span class="chat-member-tag">Member</span>'; } userHtml += `<span class="chat-msg-user" style="${userStyle}">${displayName}</span>`; const _ts = new Date(t||Date.now()).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); msg.innerHTML = `<span class="chat-time">${_ts}</span>` + userHtml + `<span class="chat-msg-text"></span>`; msg.querySelector('.chat-msg-text').textContent = text; const logs = scope === 'wall' ? chatLogsWall : chatLogsGlobal; logs.appendChild(msg); logs.scrollTop = logs.scrollHeight; if (!chatWindow.classList.contains('open') || activeChatTab !== scope) { chatUnread[scope]++; updateChatUnread(); } }
 let typingDots = 0;
 setInterval(() => { if (typingUsers.size > 0) { typingDots = (typingDots + 1) % 4; updateTypingIndicator(); } }, 500);
 function updateTypingIndicator() { let text = ""; let hasText = false; if (typingUsers.size > 0) { hasText = true; if (typingUsers.size >= 4 && !typingExpanded) text = "Several Users are typing"; else { const names = Array.from(typingUsers.values()).map(n => (hideAnon && n.startsWith('ANON-')) ? 'Anon' : n).join(', '); text = `${names} is typing`; } } if (hasText) { chatTyping.innerHTML = `<span>${text}${'.'.repeat(typingDots)}</span>`; } else { chatTyping.innerHTML = ''; } }
 
-function handleStart(e) { if (e.target !== app && !e.target.classList.contains('spacer')) return; if (e.touches && e.touches.length > 1) return; if (selAct) { if (e.cancelable) e.preventDefault(); isSelecting = true; const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selStart = {col: caret.col, row: caret.row}; selEnd = selStart; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (1 chars)`); } }
-function handleMove(e) { if (!isSelecting) return; if (e.touches && e.touches.length > 1) return; if (e.cancelable) e.preventDefault(); const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selEnd = {col: caret.col, row: caret.row}; const w = Math.abs(selEnd.col - selStart.col) + 1; const h = Math.abs(selEnd.row - selStart.row) + 1; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (${w*h} chars)`); }
+function handleStart(e) { if (e.target !== app && !e.target.classList.contains('spacer')) return; if (e.touches && e.touches.length > 1) return; if (selAct) { if (e.cancelable) e.preventDefault(); isSelecting = true; const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selStart = {col: snapTile(caret.col), row: snapTile(caret.row)}; selEnd = selStart; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (1 chars)`); } }
+function handleMove(e) { if (!isSelecting) return; if (e.touches && e.touches.length > 1) return; if (e.cancelable) e.preventDefault(); const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selEnd = {col: snapTile(caret.col), row: snapTile(caret.row)}; const w = Math.abs(selEnd.col - selStart.col) + 1; const h = Math.abs(selEnd.row - selStart.row) + 1; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (${w*h} chars)`); }
 function handleEnd(e) { if (!isSelecting) return; isSelecting = false; const c1 = Math.min(selStart.col, selEnd.col), c2 = Math.max(selStart.col, selEnd.col), r1 = Math.min(selStart.row, selEnd.row), r2 = Math.max(selStart.row, selEnd.row); const act = selAct; selAct = null; app.classList.remove('no-sel'); notifToast.classList.remove('show'); const RWfx = BASE_W * zoom, RHfx = BASE_H * zoom, CXfx = MAP_CX * zoom, CYfx = MAP_CY * zoom; areaFx.push({x1: CXfx+c1*RWfx, y1: CYfx+r1*RHfx, x2: CXfx+(c2+1)*RWfx, y2: CYfx+(r2+1)*RHfx, start: performance.now()}); if (act === 'copy') { clipboardMap.clear(); for(let r=r1; r<=r2; r++) { for(let c=c1; c<=c2; c++) { const k = `${c},${r}`; if (grid.has(k)) clipboardMap.set(`${c-c1},${r-r1}`, grid.get(k)); } } showToast(`Copied ${clipboardMap.size} chars`); } else { if (act === 'areaprotect') protectedAreas.add(`${c1},${r1},${c2},${r2}`); if (act === 'areadeprotect') { const toRemove = []; for (const a of protectedAreas) { const [ac1, ar1, ac2, ar2] = a.split(',').map(Number); if (Math.max(ac1, c1) <= Math.min(ac2, c2) && Math.max(ar1, r1) <= Math.min(ar2, r2)) toRemove.push(a); } toRemove.forEach(a => protectedAreas.delete(a)); } if (act === 'areaclear') for(let r=r1; r<=r2; r++) { for(let c=c1; c<=c2; c++) grid.delete(`${c},${r}`); } sendMsg({type:'areadmin', id:anonId, act, c1, r1, c2, r2}); } justFinishedSelecting = true; setTimeout(() => justFinishedSelecting = false, 200); }
 app.addEventListener('mousedown', handleStart); app.addEventListener('touchstart', handleStart, {passive: false});
 window.addEventListener('mousemove', handleMove); window.addEventListener('touchmove', handleMove, {passive: false});
@@ -712,20 +860,29 @@ pingToggle.addEventListener('click', () => { showPing = !showPing; pingToggle.cl
 consoleToggle.addEventListener('click', () => { showConsole = !showConsole; consoleToggle.classList.toggle('on', showConsole); consoleWindow.style.display = showConsole ? 'flex' : 'none'; });
 clearConsoleBtn.addEventListener('click', () => document.getElementById('consoleBody').innerHTML = '');
 hideAnonToggle.addEventListener('click', () => { hideAnon = !hideAnon; hideAnonToggle.classList.toggle('on', hideAnon); renderRemoteCursors(); renderPresence(); updateTypingIndicator(); });
-document.querySelectorAll('.theme-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.body.className = 'theme-' + btn.dataset.theme; updateThemeRgb(); }); });
+perfToggle.addEventListener('click', () => { perfManual = (perfManual === null) ? true : !perfManual; perfToggle.classList.toggle('on', perfManual === true); applyPerf(); });
+showColorToggle.addEventListener('click', () => { showColor = !showColor; localStorage.setItem('showColor', showColor ? '1' : '0'); showColorToggle.classList.toggle('on', showColor); });
+colorModeToggle.addEventListener('click', () => { if (!isOwner && !isAdmin) return; sendMsg({type:'color-mode', id: anonId, enabled: !colorEnabled}); });
+snapToggle.addEventListener('click', () => { snapSelection = !snapSelection; snapToggle.classList.toggle('on', snapSelection); });
+gradSpeedSlider.addEventListener('input', function(e){ setGradSpeed(parseInt(e.target.value)); });
+gradSpeedBox.addEventListener('input', function(e){ const v=parseInt(e.target.value); if(!isNaN(v)) setGradSpeed(v); });
+function setGradSpeed(v){ gradientSpeed = Math.max(1, Math.round(v||1)); gradSpeedSlider.value = Math.min(60, Math.max(2, gradientSpeed)); gradSpeedBox.value = gradientSpeed; localStorage.setItem('gradientSpeed', gradientSpeed); }
+setGradSpeed(gradientSpeed);
+document.querySelectorAll('.theme-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentTheme = btn.dataset.theme; document.body.className = (lowPerf ? 'perf-mode ' : '') + 'theme-' + currentTheme; updateThemeRgb(); }); });
 zoomSlider.addEventListener('input', e => applyZoom(parseInt(e.target.value)));
 fontSelect.addEventListener('change', e => editorFont = e.target.value);
 
-function checkLoginState() { ownerPanel.style.display = isOwner ? 'block' : 'none'; modPanel.style.display = (isOwner || isAdmin) ? 'block' : 'none'; memberPanel.style.display = (isOwner || isAdmin || isMember) ? 'block' : 'none'; noAdminPerms.style.display = (isOwner || isAdmin || isMember) ? 'none' : 'block'; userWallPanel.style.display = (!anonId.startsWith('ANON-') && currentWall !== 'Main' && currentWall !== 'walls') ? 'block' : 'none'; if (!anonId.startsWith('ANON-') || isMember || isAdmin || isOwner) logoutBtn.style.display = 'block'; else logoutBtn.style.display = 'none'; }
-loginBtn.addEventListener('click', () => { const u = prompt('Enter username:', savedCreds.u || ''); if (!u) return; const p = prompt('Enter password:', savedCreds.p || ''); if (!p) return; localStorage.setItem('creds', JSON.stringify({u, p})); sendMsg({type:'login', id: anonId, wallId: currentWall, u, p, pColor: primaryColor, sColor: secondaryColor}); });
+function checkLoginState() { ownerPanel.style.display = isOwner ? 'block' : 'none'; modPanel.style.display = (isOwner || isAdmin) ? 'block' : 'none'; memberPanel.style.display = (isOwner || isAdmin || isMember) ? 'block' : 'none'; noAdminPerms.style.display = (isOwner || isAdmin || isMember) ? 'none' : 'block'; userWallPanel.style.display = (!anonId.startsWith('ANON-') && currentWall !== 'Main' && currentWall !== 'walls') ? 'block' : 'none'; if (!anonId.startsWith('ANON-') || isMember || isAdmin || isOwner) logoutBtn.style.display = 'block'; else logoutBtn.style.display = 'none'; saveAppearanceBtn.style.display = anonId.startsWith('ANON-') ? 'none' : 'block'; colorModeSection.style.display = (isOwner || isAdmin) ? 'block' : 'none'; snapSection.style.display = (isOwner || isAdmin || isMember) ? 'block' : 'none'; }
+loginBtn.addEventListener('click', () => { const u = prompt('Enter username:', savedCreds.u || ''); if (!u) return; const p = prompt('Enter password:', savedCreds.p || ''); if (!p) return; localStorage.setItem('creds', JSON.stringify({u, p})); sendMsg({type:'login', id: anonId, wallId: currentWall, u, p, pColor: primaryColor, sColor: secondaryColor, theme: currentTheme}); });
 logoutBtn.addEventListener('click', () => { localStorage.removeItem('creds'); anonId = originalAnonId; isOwner = false; isAdmin = false; isMember = false; renderPresence(); broadcastCursor(); checkLoginState(); sendMsg({type:'hello', id:anonId}); });
+saveAppearanceBtn.addEventListener('click', () => { if (anonId.startsWith('ANON-')) return alert('Log in to save your appearance.'); sendMsg({type:'save-profile', id: anonId, theme: currentTheme, p: primaryColor, s: secondaryColor}); showToast('Appearance saved to your account.'); });
 
 wallPColor.addEventListener('input', e => { primaryColor = e.target.value; customColor1.value = primaryColor; if(activeTier===1){ myColor = primaryColor; renderPresence(); broadcastCursor(); } });
 wallSColor.addEventListener('input', e => { secondaryColor = e.target.value; customColor2.value = secondaryColor; if(activeTier===2){ myColor = secondaryColor; renderPresence(); broadcastCursor(); } });
 quickUserWallBtn.addEventListener('click', () => switchWall('~' + anonId));
 
-function handleAdminAction(act, tx, ty) { if (act === 'protect') protectedTiles.add(`${tx},${ty}`); else if (act === 'deprotect') protectedTiles.delete(`${tx},${ty}`); else if (act === 'clear') { const c0 = tx*10-4000, r0 = ty*10-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+10)*RW, y2: CY+(r0+10)*RH, start: performance.now()}); for(let r=0; r<10; r++) for(let c=0; c<10; c++) grid.delete(`${tx*10+c-4000},${ty*10+r-4000}`); } else if (act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } sendMsg({type:'admin', id:anonId, act, col:tx, row:ty}); }
-document.querySelectorAll('.admin-btn[data-admin]').forEach(btn => { btn.addEventListener('click', () => { const parent = btn.closest('#ownerPanel, #userWallPanel, #modPanel, #memberPanel'); const isOwnerPanel = parent.id === 'ownerPanel'; const isModPanel = parent.id === 'modPanel'; if (isOwnerPanel && !isOwner) return alert('You are not the owner.'); if (isModPanel && !isOwner && !isAdmin) return alert('You are not an admin.'); if (!isOwner && !isAdmin && !isMember && !isWallOwner) return alert('You do not have permission.'); const act = btn.dataset.admin; const tx = Math.floor((caret.col + 4000) / 10); const ty = Math.floor((caret.row + 4000) / 10); handleAdminAction(act, tx, ty); }); });
+function handleAdminAction(act, tx, ty) { if (act === 'protect') protectedTiles.add(`${tx},${ty}`); else if (act === 'deprotect') protectedTiles.delete(`${tx},${ty}`); else if (act === 'clear') { const c0 = tx*10-4000, r0 = ty*20-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+10)*RW, y2: CY+(r0+20)*RH, start: performance.now()}); for(let r=0; r<20; r++) for(let c=0; c<10; c++) grid.delete(`${tx*10+c-4000},${ty*20+r-4000}`); } else if (act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } sendMsg({type:'admin', id:anonId, act, col:tx, row:ty}); }
+document.querySelectorAll('.admin-btn[data-admin]').forEach(btn => { btn.addEventListener('click', () => { const parent = btn.closest('#ownerPanel, #userWallPanel, #modPanel, #memberPanel'); const isOwnerPanel = parent.id === 'ownerPanel'; const isModPanel = parent.id === 'modPanel'; if (isOwnerPanel && !isOwner) return alert('You are not the owner.'); if (isModPanel && !isOwner && !isAdmin) return alert('You are not an admin.'); if (!isOwner && !isAdmin && !isMember && !(currentWall === '~' + anonId)) return alert('You do not have permission.'); const act = btn.dataset.admin; const tx = Math.floor((caret.col + 4000) / 10); const ty = Math.floor((caret.row + 4000) / 20); handleAdminAction(act, tx, ty); }); });
 const selBtns = [
   { id: 'selClearBtn', act: 'areaclear', role: 'owner' }, { id: 'selProtBtn', act: 'areaprotect', role: 'owner' }, { id: 'selDeprotBtn', act: 'areadeprotect', role: 'owner' },
   { id: 'selClearBtnA', act: 'areaclear', role: 'admin' }, { id: 'selProtBtnA', act: 'areaprotect', role: 'admin' }, { id: 'selDeprotBtnA', act: 'areadeprotect', role: 'admin' },
@@ -733,10 +890,61 @@ const selBtns = [
 ];
 selBtns.forEach(b => { const el = document.getElementById(b.id); if(el) el.addEventListener('click', () => { let ok = false; if (b.role === 'owner' && isOwner) ok = true; if (b.role === 'admin' && (isOwner || isAdmin)) ok = true; if (b.role === 'member' && (isOwner || isAdmin || isMember)) ok = true; if (!ok) return alert('You do not have permission.'); selAct = b.act; app.classList.add('no-sel'); showToast(`Select area to ${b.act.substring(4)} (0 chars)`); }); });
 announceBtn.addEventListener('click', () => { if (!isOwner) return; const text = prompt('Announcement text:'); if (!text) return; sendMsg({type: 'announce', id: anonId, text}); });
-function showAnnouncement(text) { announcementBanner.textContent = text; announcementBanner.classList.add('show'); setTimeout(() => announcementBanner.classList.remove('show'), 5000); addChatMessage('wall', 'system', 'Announcement', '#ff8a3d', text, Date.now(), true, false, false); addChatMessage('global', 'system', 'Announcement', '#ff8a3d', text, Date.now(), true, false, false); }
+function showAnnouncement(text) { announcementBanner.textContent = text; announcementBanner.classList.add('show'); clearTimeout(announcementBanner._t); announcementBanner._t = setTimeout(() => announcementBanner.classList.remove('show'), 5000); addChatMessage('wall', 'system', 'Announcement', '#ff8a3d', text, Date.now(), true, false, false); addChatMessage('global', 'system', 'Announcement', '#ff8a3d', text, Date.now(), true, false, false); }
+function showServerAnnouncement(text) { serverBanner.innerHTML = '<span class="sb-tag">Console</span><span></span>'; serverBanner.querySelector('span:last-child').textContent = text; serverBanner.classList.add('show'); clearTimeout(serverBanner._t); serverBanner._t = setTimeout(() => serverBanner.classList.remove('show'), 7000); addChatMessage('wall', 'system', 'Server Console', '#ff4757', text, Date.now(), true, false, false, 'CONSOLE'); addChatMessage('global', 'system', 'Server Console', '#ff4757', text, Date.now(), true, false, false, 'CONSOLE'); }
 muteUserBtn.addEventListener('click', () => { if (!isOwner && !isAdmin) return; const target = prompt('Username to mute:'); if (!target) return; const mins = parseInt(prompt('Mute for how many minutes?', '5')); if (isNaN(mins) || mins <= 0) return; sendMsg({type: 'mute', id: anonId, targetUser: target, minutes: mins}); });
-function applyMute(expires) { mutedUntil = expires; if (mutedUntil > Date.now()) alert(`You have been muted until ${new Date(mutedUntil).toLocaleTimeString()}`); }
+function applyMute(expires) { mutedUntil = expires; updateMuteBadge(); if (mutedUntil > Date.now()) alert(`You have been chat-muted until ${new Date(mutedUntil).toLocaleTimeString()}`); }
 promoteBtn.addEventListener('click', () => { if (!isOwner) return; const target = prompt('Username to promote:'); if (!target) return; const role = prompt('Promote to (admin/member):', 'member'); if (!role || !['admin', 'member'].includes(role)) return alert('Invalid role.'); sendMsg({type: 'promote', id: anonId, targetUser: target, role: role}); alert(`Promotion request sent for ${target} to ${role}.`); });
+demoteBtn.addEventListener('click', () => { if (!isOwner) return; const target = prompt('Username to demote:'); if (!target) return; sendMsg({type: 'demote', id: anonId, targetUser: target}); alert(`Demotion request sent for ${target}.`); });
+kickBtnA.addEventListener('click', () => { if (!isOwner && !isAdmin) return; const target = prompt('Username to kick:'); if (!target) return; sendMsg({type: 'kick', id: anonId, targetUser: target}); });
+
+// ---- Canvas moderation (mute / unmute / temp) ----
+function doCanvasMute(permanent) {
+  if (!isOwner && !isAdmin) return;
+  const target = prompt('Username to canvas-mute:'); if (!target) return;
+  let minutes = 0;
+  if (!permanent) { minutes = parseInt(prompt('Canvas-mute for how many minutes?', '10')); if (isNaN(minutes) || minutes <= 0) return; }
+  if (permanent && !isOwner) return alert('Only the owner can permanently canvas-mute.');
+  sendMsg({type:'canvasmute', id:anonId, targetUser: target, minutes});
+}
+function doCanvasUnmute() {
+  if (!isOwner && !isAdmin) return;
+  const target = prompt('Username to canvas-unmute:'); if (!target) return;
+  sendMsg({type:'canvasunmute', id:anonId, targetUser: target});
+}
+cmMuteBtn.addEventListener('click', () => doCanvasMute(true));
+cmTempBtn.addEventListener('click', () => doCanvasMute(false));
+cmUnmuteBtn.addEventListener('click', doCanvasUnmute);
+cmTempBtnA.addEventListener('click', () => doCanvasMute(false));
+cmUnmuteBtnA.addEventListener('click', doCanvasUnmute);
+function applyCanvasMute(m) {
+  canvasMuted = true;
+  canvasMutedPermanent = !!m.permanent;
+  canvasMutedUntil = m.expires || 0;
+  updateMuteBadge();
+  showToast(canvasMutedPermanent ? 'You have been canvas-muted (permanent).' : `You have been canvas-muted${m.minutes ? ` for ${m.minutes}m` : ''}.`);
+}
+function clearCanvasMute() {
+  canvasMuted = false; canvasMutedPermanent = false; canvasMutedUntil = 0;
+  updateMuteBadge();
+  showToast('You are no longer canvas-muted.');
+}
+// keep the canvas-mute badge fresh
+setInterval(updateMuteBadge, 15000);
+
+// ---- Purge account ----
+purgeBtn.addEventListener('click', () => { if (!isOwner) return; sendMsg({type:'users-request', id:anonId}); });
+function populatePurge(users) {
+  purgeSelect.innerHTML = '';
+  const list = users.filter(u => u.u !== 'RubixYT' && u.u !== anonId);
+  if (!list.length) { const opt = document.createElement('option'); opt.textContent = 'No purgeable accounts'; opt.disabled = true; opt.selected = true; purgeSelect.appendChild(opt); }
+  list.forEach(u => { const opt = document.createElement('option'); opt.value = u.u; const tag = u.isOwner?'OWNER':u.isAdmin?'admin':u.isMember?'member':''; opt.textContent = `${u.u}${tag?' ['+tag+']':''}${u.online?' · online':''}${u.canvasMuted?' · canvas-muted':''}`; purgeSelect.appendChild(opt); });
+  purgeModal.style.display = 'flex';
+}
+purgeOverlay.addEventListener('click', () => { purgeModal.style.display = 'none'; });
+purgeConfirm.addEventListener('click', () => { const t = purgeSelect.value; if (!t) return; if (!confirm(`Permanently delete "${t}" and all of its user walls? This cannot be undone.`)) return; sendMsg({type:'purge', id:anonId, targetUser: t}); purgeModal.style.display = 'none'; });
+function handlePurged() { alert('Your account has been purged by the owner.'); try { localStorage.removeItem('creds'); } catch(e){} try { localStorage.removeItem('session'); } catch(e){} location.reload(); }
+function handleKicked() { setConnectState('disconnected'); alert('You were kicked from the server.'); }
 
 function normalizeWall(name) { const lower = name.toLowerCase().trim(); if (lower === '' || lower === 'main' || lower.includes('main wall')) return 'Main'; return name.trim(); }
 function showWallDirectory(walls) { wallDirectoryList.innerHTML = ''; if (!walls.includes('Main')) walls.push('Main'); walls.forEach(w => { const item = document.createElement('div'); item.className = 'wall-dir-item'; item.innerHTML = `<span>${w}</span><span style="color:var(--accent)">Join</span>`; item.onclick = () => { wallInput.value = w; switchWall(w); }; wallDirectoryList.appendChild(item); }); }
@@ -753,11 +961,12 @@ loadErudaBtn.addEventListener('click', () => { if (window.eruda) { eruda.show();
 
 setInterval(()=>{ broadcastCursor(); const now=Date.now(); let changed=false; for(const[id,p] of peers){ if(now-p.lastSeen>5000){ peers.delete(id); typingUsersWall.delete(id); changed=true; } } if(changed){ renderRemoteCursors(); renderPresence(); updateTypingIndicator(); } },2500);
 setInterval(() => { if (showPing) sendMsg({type:'ping', id: anonId, t: Date.now()}); }, 2000);
+setInterval(() => { if (!anonId.startsWith('ANON-')) sendMsg({type:'save-profile', id: anonId, theme: currentTheme, p: primaryColor, s: secondaryColor}); }, 15000);
 
-updateCoord(); renderPresence(); checkLoginState(); renderLoop(); applyZoom(100); connect()
+updateCoord(); renderPresence(); showColorToggle.classList.toggle('on', showColor); colorModeToggle.classList.toggle('on', colorEnabled); checkLoginState(); applyPerf(); rafId = requestAnimationFrame(renderLoop); applyZoom(100); connect()
 setTimeout(() => app.scrollTo((MAP_CX * zoom) - window.innerWidth/2, (MAP_CY * zoom) - window.innerHeight/2), 1000);
 window.addEventListener('pagehide', ()=>sendMsg({type:'bye',id:anonId}));
 window.addEventListener('beforeunload', ()=>sendMsg({type:'bye',id:anonId}));
 </script>
-</body>
-  </html>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2d55a06594154c7',t:'MTc4NzEwMjU5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
