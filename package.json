@@ -1,6 +1,6 @@
 {
   "name": "periawall",
-  "version": "0.1.13",
+  "version": "0.1.18",
   "description": "Multiplayer text wall",
   "main": "server.js",
   "scripts": {
