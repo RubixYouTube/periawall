@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const WebSocket = require('ws');
 
-const VERSION = '0.1.16';
+const VERSION = '0.1.18';
 
 const server = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') { res.writeHead(204); res.end(); return; }
@@ -45,7 +45,7 @@ let dbDirty = false;
 setInterval(() => { if (dbDirty) { dbDirty = false; fs.writeFile('db.json', JSON.stringify(db), () => {}); } }, 2000);
 
 function normalizeWall(name) { const lower = name.toLowerCase().trim(); if (lower === '' || lower === 'main' || lower.includes('main wall')) return 'Main'; return name.trim(); }
-function getTileKey(col, row) { return `${Math.floor((col+4000)/10)},${Math.floor((row+4000)/20)}`; }
+function getTileKey(col, row) { return `${Math.floor((col+4000)/20)},${Math.floor((row+4000)/10)}`; }
 
 const activeUsers = new Set();
 
@@ -95,14 +95,15 @@ wss.on('connection', (ws, req) => {
                     db.accounts[msg.u].p = msg.pColor || db.accounts[msg.u].p || '#ff8a3d';
                     db.accounts[msg.u].s = msg.sColor || db.accounts[msg.u].s || '#f4f1de';
                     db.accounts[msg.u].theme = msg.theme || db.accounts[msg.u].theme || 'orange';
+                    db.accounts[msg.u].tier = msg.tier || db.accounts[msg.u].tier || 1;
                     dbDirty = true;
-                } else { db.accounts[msg.u] = { password: msg.p, isOwner: false, isAdmin: false, isMember: false, p: msg.pColor || '#ff8a3d', s: msg.sColor || '#f4f1de', theme: msg.theme || 'orange' }; dbDirty = true; }
+                } else { db.accounts[msg.u] = { password: msg.p, isOwner: false, isAdmin: false, isMember: false, p: msg.pColor || '#ff8a3d', s: msg.sColor || '#f4f1de', theme: msg.theme || 'orange', tier: msg.tier || 1 }; dbDirty = true; }
             }
             if (ws.username) activeUsers.delete(ws.username);
             ws.username = msg.u; activeUsers.add(msg.u);
             db.userIps[msg.u] = ws.ip; dbDirty = true;
             const acc = db.accounts[msg.u];
-            ws.send(JSON.stringify({ type: 'login-result', id: 'system', target: msg.id, success: true, isOwner: acc.isOwner, isAdmin: acc.isAdmin, isMember: acc.isMember, username: msg.u, p: acc.p, s: acc.s, theme: acc.theme || 'orange' }));
+            ws.send(JSON.stringify({ type: 'login-result', id: 'system', target: msg.id, success: true, isOwner: acc.isOwner, isAdmin: acc.isAdmin, isMember: acc.isMember, username: msg.u, p: acc.p, s: acc.s, theme: acc.theme || 'orange', tier: acc.tier || 1 }));
             if (isCanvasMuted(ws.ip)) {
                 const m = db.canvasMuted[ws.ip];
                 const minutes = m.permanent ? 0 : Math.max(0, Math.round((m.expires - Date.now()) / 60000));
@@ -176,8 +177,9 @@ wss.on('connection', (ws, req) => {
                 if (msg.theme) accSP.theme = msg.theme;
                 if (msg.p) accSP.p = msg.p;
                 if (msg.s) accSP.s = msg.s;
+                if (msg.tier) accSP.tier = msg.tier;
                 dbDirty = true;
-                ws.send(JSON.stringify({type:'save-profile-result', id:'system', target: msg.id, success: true, theme: accSP.theme, p: accSP.p, s: accSP.s}));
+                ws.send(JSON.stringify({type:'save-profile-result', id:'system', target: msg.id, success: true, theme: accSP.theme, p: accSP.p, s: accSP.s, tier: accSP.tier}));
             }
             return;
         }
@@ -251,6 +253,8 @@ wss.on('connection', (ws, req) => {
             return;
         }
 
+        if (msg.type === 'members-request') { const _ml = []; for (const _u of Object.keys(db.accounts)) { const _a = db.accounts[_u]; const _r = _a.isOwner ? 'owner' : _a.isAdmin ? 'admin' : _a.isMember ? 'member' : null; if (_r) _ml.push({ u: _u, role: _r, online: activeUsers.has(_u) }); } ws.send(JSON.stringify({type:'members-response', id:'system', target: msg.id, members: _ml})); return; }
+
         if (msg.type === 'users-request') {
             const userData = db.accounts[msg.id];
             if (!userData || !(userData.isOwner || userData.isAdmin)) return;
@@ -320,7 +324,7 @@ wss.on('connection', (ws, req) => {
             if (!isProtected) { for (const a of (wallData.protectedAreas || [])) { if (msg.col >= a[0] && msg.col <= a[2] && msg.row >= a[1] && msg.row <= a[3]) { isProtected = true; break; } } }
             if (isOwner || isAdmin || isWallOwner || isMember || !isProtected) {
                 const k = `${msg.col},${msg.row}`; const ex = wallData.grid[k];
-                if (!ex || msg.t >= ex.t) { wallData.grid[k] = { ch: msg.ch, color: msg.color, t: msg.t, b: msg.fmt.b, i: msg.fmt.i, u: msg.fmt.u, s: msg.fmt.s, o: msg.fmt.o, ol: msg.fmt.ol }; dbDirty = true; }
+                if (!ex || msg.t >= ex.t) { const nc = { ch: msg.ch, color: msg.color, t: msg.t }; if (msg.fmt.b) nc.b = true; if (msg.fmt.i) nc.i = true; if (msg.fmt.u) nc.u = true; if (msg.fmt.s) nc.s = true; if (msg.fmt.o) nc.o = true; if (msg.fmt.ol) nc.ol = true; wallData.grid[k] = nc; dbDirty = true; }
             }
         } else if (msg.type === 'clear') {
             let isProtected = wallData.protectedTiles.includes(getTileKey(msg.col, msg.row));
@@ -336,7 +340,7 @@ wss.on('connection', (ws, req) => {
                 } else {
                     if (msg.act === 'protect') { if (!wallData.protectedTiles.includes(`${msg.col},${msg.row}`)) { wallData.protectedTiles.push(`${msg.col},${msg.row}`); dbDirty = true; } }
                     else if (msg.act === 'deprotect') { wallData.protectedTiles = wallData.protectedTiles.filter(t => t !== `${msg.col},${msg.row}`); dbDirty = true; }
-                    else if (msg.act === 'clear') { for(let r=0; r<20; r++) for(let c=0; c<10; c++) delete wallData.grid[`${msg.col*10+c-4000},${msg.row*20+r-4000}`]; dbDirty = true; }
+                    else if (msg.act === 'clear') { for(let r=0; r<10; r++) for(let c=0; c<20; c++) delete wallData.grid[`${msg.col*20+c-4000},${msg.row*10+r-4000}`]; dbDirty = true; }
                     else if (msg.act === 'wallclear' && isOwner) { wallData.grid = {}; wallData.protectedTiles = []; wallData.protectedAreas = []; wallData.chat = []; dbDirty = true; }
                 }
             }
@@ -394,6 +398,7 @@ const HELP = [
   '/tempcanvasmute <user> <m>  Temporarily canvas-mute a user (by IP)',
   '/canvasunmute <user>        Lift a canvas mute',
   '/color <on|off>             Enable/disable color rendering for everyone',
+  '/stoppayload                Clear the "server payloaded" warning on all clients',
   '/kick <user>                Disconnect a user',
   '/purge <user>               Delete an account and its user walls',
   '/purgeall <reason> <sec>    Wipe ALL walls and users (optional countdown)',
@@ -433,6 +438,7 @@ stdin.addListener('data', function(d) {
             else { db.colorEnabled = true; dbDirty = true; broadcast({type: 'color-mode', enabled: true}); console.log('Color ENABLED for everyone.'); }
             break;
         }
+        case '/stoppayload': broadcast({type:'payload-stopped'}); console.log('Payload warning cleared for all clients.'); break;
         case '/member': promoteConsole(arg1, 'member'); break;
         case '/admin': promoteConsole(arg1, 'admin'); break;
         case '/demote':
@@ -489,6 +495,7 @@ stdin.addListener('data', function(d) {
             if (m) { reason = m[1]; secs = parseInt(m[2]); } else { reason = rest; secs = 0; }
             if (!reason) reason = 'No reason provided';
             if (secs > 0) {
+                broadcast({type:'purgeall-countdown', seconds: secs, reason: reason});
                 consoleAnnounce('FULL WIPE in ' + secs + 's — ' + reason);
                 console.log('[PURGEALL] scheduled in ' + secs + 's: ' + reason);
                 setTimeout(() => wipeAll(reason), secs * 1000);
