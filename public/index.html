@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Periawall 0.1.16</title>
+<title>Periawall 0.1.18</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=Source+Code+Pro:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=Source+Code+Pro:wght@400;600;700&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0a0908;--surface:#15110d;--surface-2:#1d1812;--ink:#f3e9d2;--ink-dim:#8b7e6a;
@@ -232,6 +232,7 @@ body.perf-mode::after{display:none}
   .options-panel{padding:52px 12px 32px 12px}
   .opt-head h2{font-size:17px}
   #consoleWindow { width: calc(100vw - 16px); left: 8px; bottom: 80px; }
+  #optExtras{bottom:50px;right:8px;}
   .login-btn,.admin-btn,.wall-btn,.danger-btn{padding:11px;font-size:11px}
   .opt-row{font-size:13px}
 }
@@ -239,6 +240,8 @@ body.perf-mode::after{display:none}
   .rcursor{transition:none}.hint h1::after,.rcursor .bar{animation:none}
 }
 #statsHud{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:21;display:none;gap:8px;pointer-events:none;}#statsHud span{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;background:rgba(15,12,9,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);padding:5px 10px;border-radius:20px;color:var(--ink-dim);display:inline-flex;align-items:center;gap:5px;text-transform:uppercase;}#statsHud b{font-size:12px;color:var(--accent);}.gs-row{display:flex;align-items:center;gap:6px;padding:7px 2px 0;border-top:1px solid var(--border);margin-top:5px;}.gs-row .pal-label{font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:1px;flex-shrink:0;}.gs-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none;min-width:60px;}.gs-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:var(--accent);border-radius:50%;cursor:pointer;}.gs-slider::-moz-range-thumb{width:14px;height:14px;background:var(--accent);border-radius:50%;cursor:pointer;border:none;}.gs-box{width:48px;background:var(--bg);border:1px solid var(--border);color:var(--ink);border-radius:4px;padding:3px;font-family:'JetBrains Mono',monospace;font-size:11px;text-align:center;outline:none;}.gs-box:focus{border-color:var(--accent);}.chat-window{border-radius:10px 0 0 10px;box-shadow:-12px 0 40px rgba(0,0,0,.5),inset 1px 0 0 rgba(var(--accent-rgb),.08);}.chat-handle{background:linear-gradient(180deg,rgba(var(--accent-rgb),.18),rgba(var(--accent-rgb),.04));}.chat-tabs{background:rgba(0,0,0,.2);}.chat-msg{border-left:2px solid transparent;}.chat-msg:hover{border-left-color:var(--accent);}#chatInput:focus{box-shadow:0 0 0 2px rgba(var(--accent-rgb),.2);}#chatSend{border-radius:6px;}
+#optExtras{position:fixed;bottom:56px;right:18px;z-index:25;display:flex;flex-direction:column;gap:6px;pointer-events:auto;}.extra-btn{background:rgba(15,12,9,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);color:var(--ink);padding:6px 12px;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:background .2s,border-color .2s;text-align:left;}.extra-btn:hover{background:rgba(40,30,20,.95);border-color:rgba(var(--accent-rgb),.5);}.member-row{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;background:rgba(255,255,255,0.04);border-radius:6px;font-size:12px;}
+#payloadBanner{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-130%);z-index:52;background:linear-gradient(90deg,rgba(40,6,12,.97),rgba(74,10,20,.97));border:1px solid #ff4756;color:#ffd5da;padding:10px 18px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;max-width:90vw;text-align:center;box-shadow:0 6px 22px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.2,.8,.2,1);}#payloadBanner.show{transform:translateX(-50%) translateY(0);}#purgeCountdown{position:fixed;top:62px;left:50%;transform:translateX(-50%);z-index:53;display:none;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}#purgeCountdown .pc-circle{width:66px;height:66px;border-radius:50%;background:conic-gradient(#ff4756 100%,rgba(255,71,86,0.15) 0);display:flex;align-items:center;justify-content:center;box-shadow:0 0 26px rgba(255,71,86,.55);}#purgeCountdown .pc-num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;color:#fff;}#purgeCountdown .pc-reason{font-family:'JetBrains Mono',monospace;font-size:11px;color:#ffd5da;background:rgba(20,4,8,.92);border:1px solid #ff4756;padding:5px 12px;border-radius:6px;max-width:80vw;text-align:center;}
 </style>
 </head>
 <body class="theme-orange">
@@ -259,6 +262,8 @@ body.perf-mode::after{display:none}
 <div id="muteBadge"></div>
 <div id="announcementBanner"></div>
 <div id="serverBanner"></div>
+<div id="payloadBanner"></div>
+<div id="purgeCountdown"><div class="pc-circle"><div class="pc-num"></div></div><div class="pc-reason"></div></div>
 <div id="statsHud"><span id="fpsChip">FPS <b>0</b></span><span id="pingChip">PING <b>0</b></span></div>
 <div id="notifToast"></div>
 <div id="consoleWindow">
@@ -312,7 +317,7 @@ body.perf-mode::after{display:none}
     <div class="opt-inner">
       <div class="opt-head">
         <h2>Peria<span>wall</span></h2>
-        <span class="ver">v0.1.16</span>
+        <span class="ver">v0.1.18</span>
       </div>
       <div class="opt-tabs">
         <button class="opt-tab active" data-stab="general">General</button>
@@ -335,7 +340,7 @@ body.perf-mode::after{display:none}
           <div class="opt-title">View</div>
           <div class="opt-row"><span>Zoom</span> <span id="zoomVal" style="font-size:10px;color:var(--accent)">100%</span></div>
           <input type="range" class="zoom-slider" id="zoomSlider" min="50" max="200" value="100">
-          <div class="opt-row"><span>Font</span><select id="fontSelect"><option>JetBrains Mono</option><option>Fira Code</option><option>Source Code Pro</option><option>Roboto Mono</option><option>Space Grotesk</option><option>Monaco</option><option>Consolas</option><option>Courier New</option><option>Arial</option><option>Times New Roman</option></select></div>
+          <div class="opt-row"><span>Font</span><select id="fontSelect"><option>JetBrains Mono</option><option>Fira Code</option><option>Source Code Pro</option><option>Roboto Mono</option><option>Space Grotesk</option><option>Space Mono</option><option>Monaco</option><option>Consolas</option><option>Courier New</option><option>Arial</option><option>Times New Roman</option></select></div>
         </div>
         <div class="opt-section">
           <div class="opt-title">Interface</div>
@@ -369,9 +374,9 @@ body.perf-mode::after{display:none}
             <div class="opt-title">User Wall Management</div>
             <div class="opt-row"><span>Primary Color</span><input type="color" id="wallPColor" value="#ff8a3d" style="width:40px;height:24px;background:none;border:none;cursor:pointer;"></div>
             <div class="opt-row"><span>Secondary Color</span><input type="color" id="wallSColor" value="#f4f1de" style="width:40px;height:24px;background:none;border:none;cursor:pointer;"></div>
-            <button class="admin-btn" data-admin="protect">Protect 10x20</button>
-            <button class="admin-btn" data-admin="deprotect">Deprotect 10x20</button>
-            <button class="admin-btn" data-admin="clear">Clear 10x20</button>
+            <button class="admin-btn" data-admin="protect">Protect 20x10</button>
+            <button class="admin-btn" data-admin="deprotect">Deprotect 20x10</button>
+            <button class="admin-btn" data-admin="clear">Clear 20x10</button>
             <button class="admin-btn" data-admin="wallclear">Clear This Wall</button>
           </div>
         </div>
@@ -409,9 +414,9 @@ body.perf-mode::after{display:none}
         </div>
         <div id="modPanel">
           <div class="opt-title">Admin Tools</div>
-          <button class="admin-btn" data-admin="protect">Protect 10x20</button>
-          <button class="admin-btn" data-admin="deprotect">Deprotect 10x20</button>
-          <button class="admin-btn" data-admin="clear">Clear 10x20</button>
+          <button class="admin-btn" data-admin="protect">Protect 20x10</button>
+          <button class="admin-btn" data-admin="deprotect">Deprotect 20x10</button>
+          <button class="admin-btn" data-admin="clear">Clear 20x10</button>
           <button class="admin-btn" id="selClearBtnA">Select Clear</button>
           <button class="admin-btn" id="selProtBtnA">Select Protect</button>
           <button class="admin-btn" id="selDeprotBtnA">Select Deprotect</button>
@@ -426,9 +431,9 @@ body.perf-mode::after{display:none}
         </div>
         <div id="memberPanel">
           <div class="opt-title">Member Tools</div>
-          <button class="admin-btn" data-admin="protect">Protect 10x20</button>
-          <button class="admin-btn" data-admin="deprotect">Deprotect 10x20</button>
-          <button class="admin-btn" data-admin="clear">Clear 10x20</button>
+          <button class="admin-btn" data-admin="protect">Protect 20x10</button>
+          <button class="admin-btn" data-admin="deprotect">Deprotect 20x10</button>
+          <button class="admin-btn" data-admin="clear">Clear 20x10</button>
           <button class="admin-btn" id="selClearBtnM">Select Clear</button>
           <button class="admin-btn" id="selProtBtnM">Select Protect</button>
           <button class="admin-btn" id="selDeprotBtnM">Select Deprotect</button>
@@ -439,6 +444,8 @@ body.perf-mode::after{display:none}
   </div>
 </div>
 
+<div id="optExtras"><button class="extra-btn" id="onlineBtn">Online: 1</button><button class="extra-btn" id="membersBtn">Member List</button></div>
+<div class="modal" id="membersModal"><div class="modal-overlay" id="membersOverlay"></div><div class="modal-content" style="width:320px;"><h3>Member List</h3><div id="membersList" style="display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow-y:auto;"></div></div></div>
 <div class="chat-window" id="chatWindow">
   <div class="chat-handle" id="chatHandle"><span>Chat</span><div id="chatUnread">0</div></div>
   <div class="chat-body">
@@ -536,7 +543,7 @@ body.perf-mode::after{display:none}
   </div>
 </div>
 
-<div class="hud hud-br"><div class="brand"><b>Periawall</b> 0.1.16</div></div>
+<div class="hud hud-br"><div class="brand"><b>Periawall</b> 0.1.18</div></div>
 
 <script>
 // Console Overrides
@@ -603,11 +610,14 @@ const wallPColor=document.getElementById('wallPColor'), wallSColor=document.getE
 const cmMuteBtn=document.getElementById('cmMuteBtn'), cmTempBtn=document.getElementById('cmTempBtn'), cmUnmuteBtn=document.getElementById('cmUnmuteBtn'), cmTempBtnA=document.getElementById('cmTempBtnA'), cmUnmuteBtnA=document.getElementById('cmUnmuteBtnA');
 const showColorToggle=document.getElementById('showColorToggle'), colorModeToggle=document.getElementById('colorModeToggle'), snapToggle=document.getElementById('snapToggle'), snapSection=document.getElementById('snapSection'), colorModeSection=document.getElementById('colorModeSection');
 const statsHud=document.getElementById('statsHud'), fpsChip=document.getElementById('fpsChip'), pingChip=document.getElementById('pingChip'), gradSpeedSlider=document.getElementById('gradSpeedSlider'), gradSpeedBox=document.getElementById('gradSpeedBox');
+const onlineBtn=document.getElementById('onlineBtn'), membersBtn=document.getElementById('membersBtn'), membersList=document.getElementById('membersList'), membersModal=document.getElementById('membersModal'), membersOverlay=document.getElementById('membersOverlay');
+const payloadBanner=document.getElementById('payloadBanner'), purgeCountdown=document.getElementById('purgeCountdown');
 const purgeModal=document.getElementById('purgeModal'), purgeOverlay=document.getElementById('purgeOverlay'), purgeSelect=document.getElementById('purgeSelect'), purgeConfirm=document.getElementById('purgeConfirm');
 const saveAppearanceBtn=document.getElementById('saveAppearanceBtn');
 
 // ---- Performance / budget-device detection ----
 let lowPerf = false, perfManual = null, rafId = null;
+let bgCanvas = null, bgKey = '';
 function applyPerf() {
   const mem = (navigator.deviceMemory || 8);
   const cores = (navigator.hardwareConcurrency || 8);
@@ -662,9 +672,9 @@ function renderLoop(){
   ctx.clearRect(0, 0, vw, vh);
   const themeHueMap = { orange: 20, red: 0, green: 140, blue: 200, purple: 270, pink: 330, cyan: 190 }, theme = (document.body.className.match(/theme-(\w+)/)||[])[1] || 'orange', hBase = themeHueMap[theme] || 20;
   const t = performance.now() / 8000;
-  const gradBg = ctx.createLinearGradient(0, 0, vw, vh);
-  gradBg.addColorStop(0, `hsl(${hBase % 360}, 42%, 4%)`); gradBg.addColorStop(0.5, `hsl(${(hBase + 18) % 360}, 45%, 7%)`); gradBg.addColorStop(1, `hsl(${(hBase + 36) % 360}, 42%, 4%)`);
-  ctx.fillStyle = gradBg; ctx.fillRect(0, 0, vw, vh);
+  const _bgK = vw + 'x' + vh + '_' + dpr + '_' + hBase;
+  if (_bgK !== bgKey) { bgCanvas = document.createElement('canvas'); bgCanvas.width = Math.max(1, Math.floor(vw * dpr)); bgCanvas.height = Math.max(1, Math.floor(vh * dpr)); const bx = bgCanvas.getContext('2d'); bx.setTransform(dpr, 0, 0, dpr, 0, 0); const gradBg = bx.createLinearGradient(0, 0, vw, vh); gradBg.addColorStop(0, `hsl(${hBase % 360}, 42%, 4%)`); gradBg.addColorStop(0.5, `hsl(${(hBase + 18) % 360}, 45%, 7%)`); gradBg.addColorStop(1, `hsl(${(hBase + 36) % 360}, 42%, 4%)`); bx.fillStyle = gradBg; bx.fillRect(0, 0, vw, vh); bgKey = _bgK; }
+  ctx.drawImage(bgCanvas, 0, 0, vw, vh);
   const blobCount = lowPerf ? 1 : 5;
   for(let i=0; i<blobCount; i++) { const gx = (Math.sin(t * (2+i*0.5) + i * 2) * 0.5 + 0.5) * vw, gy = (Math.cos(t * (1.5+i*0.5) + i * 2) * 0.5 + 0.5) * vh; const radGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, vw * 0.5); radGrad.addColorStop(0, `hsla(${hBase + i*30}, 80%, 30%, 0.12)`); radGrad.addColorStop(1, 'transparent'); ctx.fillStyle = radGrad; ctx.fillRect(0,0,vw,vh); }
   if (!lowPerf) { const _dn = performance.now(); for (let i=0;i<dust.length;i++){ const p=dust[i]; const dx=(p.x*vw + Math.sin(_dn/2400 + p.ph)*30*p.sp + vw) % vw; const dy=(p.y*vh + _dn/1400*8*p.sp + vh) % vh; ctx.fillStyle = 'rgba(' + currentAccentRgb + ',' + (0.10+0.14*Math.abs(Math.sin(_dn/1800+p.ph))) + ')'; ctx.fillRect(dx, dy, p.s, p.s); } }
@@ -691,7 +701,7 @@ function renderLoop(){
     if (cell.s) { ctx.fillStyle = cellDrawColor(cell, x, y, RW, RH); ctx.fillRect(x, y + (12 * zoom) * 0.4, RW, 1); } if (cell.ol) { ctx.fillStyle = cellDrawColor(cell, x, y, RW, RH); ctx.fillRect(x, y, RW, 1); }
   }
 
-  for (const key of protectedTiles) { const [tx, ty] = key.split(',').map(Number); const c0 = tx * 10 - 4000, r0 = ty * 20 - 4000; const x = CX + c0 * RW, y = CY + r0 * RH, w = 10 * RW, h = 20 * RH; if (x + w < scrollX || x > scrollX + vw || y + h < scrollY || y > scrollY + vh) continue; const pulse = 0.5 + 0.5*Math.sin(performance.now()/600); ctx.fillStyle = `rgba(239, 71, 111, ${0.04 + 0.06*pulse})`; ctx.fillRect(x, y, w, h); ctx.strokeStyle = `rgba(239, 71, 111, ${0.4 + 0.4*pulse})`; ctx.lineWidth = 1.5; ctx.setLineDash([8, 5]); ctx.lineDashOffset = -performance.now()/40; ctx.strokeRect(x, y, w, h); ctx.setLineDash([]); ctx.lineDashOffset = 0; }
+  for (const key of protectedTiles) { const [tx, ty] = key.split(',').map(Number); const c0 = tx * 20 - 4000, r0 = ty * 10 - 4000; const x = CX + c0 * RW, y = CY + r0 * RH, w = 20 * RW, h = 10 * RH; if (x + w < scrollX || x > scrollX + vw || y + h < scrollY || y > scrollY + vh) continue; const pulse = 0.5 + 0.5*Math.sin(performance.now()/600); ctx.fillStyle = `rgba(239, 71, 111, ${0.04 + 0.06*pulse})`; ctx.fillRect(x, y, w, h); ctx.strokeStyle = `rgba(239, 71, 111, ${0.4 + 0.4*pulse})`; ctx.lineWidth = 1.5; ctx.setLineDash([8, 5]); ctx.lineDashOffset = -performance.now()/40; ctx.strokeRect(x, y, w, h); ctx.setLineDash([]); ctx.lineDashOffset = 0; }
   for (const area of protectedAreas) { const [c1, r1, c2, r2] = area.split(',').map(Number); const x = CX + c1 * RW, y = CY + r1 * RH, w = (c2-c1+1) * RW, h = (r2-r1+1) * RH; if (x + w < scrollX || x > scrollX + vw || y + h < scrollY || y > scrollY + vh) continue; const pulse = 0.5 + 0.5*Math.sin(performance.now()/600); ctx.fillStyle = `rgba(0, 180, 216, ${0.04 + 0.05*pulse})`; ctx.fillRect(x, y, w, h); ctx.strokeStyle = `rgba(72, 202, 228, ${0.4 + 0.4*pulse})`; ctx.lineWidth = 1.5; ctx.setLineDash([8, 5]); ctx.lineDashOffset = -performance.now()/40; ctx.strokeRect(x, y, w, h); ctx.setLineDash([]); ctx.lineDashOffset = 0; }
   ctx.strokeStyle = 'rgba(255, 138, 61, 0.25)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.strokeRect(CX - 2, CY - 2, RW + 4, RH + 4); ctx.setLineDash([]);
   
@@ -708,9 +718,9 @@ function renderLoop(){
   rafId = requestAnimationFrame(renderLoop);
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } } else if (!rafId) { lastFpsTime = performance.now(); rafId = requestAnimationFrame(renderLoop); } });
-function getTileKey(col, row) { return `${Math.floor((col+4000)/10)},${Math.floor((row+4000)/20)}`; }
-const snapTile = v => snapSelection ? Math.round(v/10)*10 : v;
-function canEdit(col, row) { if (currentWall === 'walls') return false; if (canvasMuted) return false; if (Date.now() < mutedUntil) return false; if (isOwner || isAdmin) return true; const isWallOwner = currentWall === '~' + anonId; if (isWallOwner) return true; if (isMember && currentWall === 'Main') return true; if (protectedTiles.has(getTileKey(col, row))) return false; for (const a of protectedAreas) { const [ac1, ar1, ac2, ar2] = a.split(',').map(Number); if (col >= ac1 && col <= ac2 && row >= ar1 && row <= ar2) return false; } return true; }
+function getTileKey(col, row) { return `${Math.floor((col+4000)/20)},${Math.floor((row+4000)/10)}`; }
+const snapCol = v => snapSelection ? Math.round(v/20)*20 : v; const snapRow = v => snapSelection ? Math.round(v/10)*10 : v;
+function canEdit(col, row) { if (currentWall === 'walls') return false; if (canvasMuted) return false; if (Date.now() < mutedUntil) return false; if (isOwner || isAdmin) return true; const isWallOwner = currentWall === '~' + anonId; if (isWallOwner) return true; if (isMember) return true; if (protectedTiles.has(getTileKey(col, row))) return false; for (const a of protectedAreas) { const [ac1, ar1, ac2, ar2] = a.split(',').map(Number); if (col >= ac1 && col <= ac2 && row >= ar1 && row <= ar2) return false; } return true; }
 function placeCaretFromPixel(px,py){ const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; let col = Math.round((px - CX) / RW), row = Math.round((py - CY) / RH); caret.col = Math.max(-4000, Math.min(3999, col)); caret.row = Math.max(-4000, Math.min(3999, row)); lastClickCol = caret.col; updateCoord(); ensureCaretVisible(); broadcastCursor(); hint.classList.add('hide'); }
 function ensureCaretVisible() { const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; const px = CX + caret.col * RW, py = CY + caret.row * RH; const margin = 50; let sx = app.scrollLeft, sy = app.scrollTop; if (px < sx + margin) sx = px - margin; else if (px > sx + window.innerWidth - margin) sx = px - window.innerWidth + margin; if (py < sy + margin) sy = py - margin; else if (py > sy + window.innerHeight - margin) sy = py - window.innerHeight + margin; app.scrollTo(sx, sy); }
 function moveCaret(dc,dr){ caret.col=Math.max(-4000,Math.min(3999,caret.col+dc)); caret.row=Math.max(-4000,Math.min(3999,caret.row+dr)); ensureCaretVisible(); updateCoord(); broadcastCursor(); }
@@ -728,7 +738,7 @@ window.spawnCharXY = function(str, x, y, color) { let cx = x, cy = y; for (let i
 window.spawnDecoChar = function(str, color, deco) { for (let i=0; i<str.length; i++) { if (str[i] >= ' ') { typeCharAt(caret.col, caret.row, str[i], color || myColor, true, deco); advanceCaret(); } else if (str[i] === '\n') enterAction(); } };
 window.spawnDecoCharXY = function(str, x, y, color, deco) { let cx = x, cy = y; for (let i=0; i<str.length; i++) { if (str[i] >= ' ') { typeCharAt(cx, cy, str[i], color || myColor, true, deco); cx++; if (cx > 3999) { cx = -4000; cy++; } } else if (str[i] === '\n') { cy++; cx = x; } } };
 function areaFxPush(c1,r1,c2,r2){ const RW=BASE_W*zoom,RH=BASE_H*zoom,CX=MAP_CX*zoom,CY=MAP_CY*zoom; areaFx.push({x1:CX+c1*RW,y1:CY+r1*RH,x2:CX+(c2+1)*RW,y2:CY+(r2+1)*RH,start:performance.now()}); }
-window.dynamicSelect = function(x, y, char, event, w, h) { x=Math.round(x||0); y=Math.round(y||0); const W=Math.max(1,Math.round(w||10)), H=Math.max(1,Math.round(h||20)); const c1=x, r1=y, c2=x+W-1, r2=y+H-1; if (event==='prt'||event==='protect') { protectedAreas.add(`${c1},${r1},${c2},${r2}`); sendMsg({type:'areadmin', id:anonId, act:'areaprotect', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='dprt'||event==='deprotect') { const rem=[]; for(const a of protectedAreas){ const aa=a.split(',').map(Number); if(Math.max(aa[0],c1)<=Math.min(aa[2],c2)&&Math.max(aa[1],r1)<=Math.min(aa[3],r2)) rem.push(a);} rem.forEach(function(a){protectedAreas.delete(a);}); sendMsg({type:'areadmin', id:anonId, act:'areadeprotect', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='clr'||event==='clear') { for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) grid.delete(`${c},${r}`); sendMsg({type:'areadmin', id:anonId, act:'areaclear', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='write') { const fc=(typeof char==='string'?char:String(char||'X'))[0]||'X'; for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) typeCharAt(c,r,fc,myColor,true); } else if (event==='writeBox') { let bc=char; if(typeof bc==='string') bc=bc.split(''); const top=bc[0]||'-', down=bc[1]||'-', left=bc[2]||'|', right=bc[3]||'|'; for(let c=c1;c<=c2;c++){ typeCharAt(c,r1,top,myColor,true); typeCharAt(c,r2,down,myColor,true); } for(let r=r1;r<=r2;r++){ typeCharAt(c1,r,left,myColor,true); typeCharAt(c2,r,right,myColor,true); } } };
+window.dynamicSelect = function(x, y, char, event, w, h) { x=Math.round(x||0); y=Math.round(y||0); const W=Math.max(1,Math.round(w||20)), H=Math.max(1,Math.round(h||10)); const c1=x, r1=y, c2=x+W-1, r2=y+H-1; if (event==='prt'||event==='protect') { protectedAreas.add(`${c1},${r1},${c2},${r2}`); sendMsg({type:'areadmin', id:anonId, act:'areaprotect', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='dprt'||event==='deprotect') { const rem=[]; for(const a of protectedAreas){ const aa=a.split(',').map(Number); if(Math.max(aa[0],c1)<=Math.min(aa[2],c2)&&Math.max(aa[1],r1)<=Math.min(aa[3],r2)) rem.push(a);} rem.forEach(function(a){protectedAreas.delete(a);}); sendMsg({type:'areadmin', id:anonId, act:'areadeprotect', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='clr'||event==='clear') { for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) grid.delete(`${c},${r}`); sendMsg({type:'areadmin', id:anonId, act:'areaclear', c1, r1, c2, r2});  areaFxPush(c1,r1,c2,r2); } else if (event==='write') { const fc=(typeof char==='string'?char:String(char||'X'))[0]||'X'; for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) typeCharAt(c,r,fc,myColor,true); } else if (event==='writeBox') { let bc=char; if(typeof bc==='string') bc=bc.split(''); const top=bc[0]||'-', down=bc[1]||'-', left=bc[2]||'|', right=bc[3]||'|'; for(let c=c1;c<=c2;c++){ typeCharAt(c,r1,top,myColor,true); typeCharAt(c,r2,down,myColor,true); } for(let r=r1;r<=r2;r++){ typeCharAt(c1,r,left,myColor,true); typeCharAt(c2,r,right,myColor,true); } } };
 
 let ws, isConnected = false;
 function setConnectState(state) { 
@@ -747,10 +757,10 @@ function connect() {
   ws.onmessage = (e) => {
     const m = JSON.parse(e.data);
     if (m.target && m.target !== anonId) return; if (m.id === anonId) return;
-    if (m.type === 'pong' && m.target === anonId) { currentPing = Date.now() - m.t; return; }
+    if (m.type === 'pong' && m.target === anonId) { currentPing = Date.now() - m.t; checkPayload(); return; }
     if (m.type === 'online-count') { globalOnlineCount = m.count; return; }
     if (m.type === 'chat-history' && m.target === anonId) { if (m.scope === 'global') { chatLogsGlobal.innerHTML = ''; (m.messages || []).forEach(msg => addChatMessage('global', msg.id, msg.anon, msg.color, msg.text, msg.t, msg.isOwner, msg.isAdmin, msg.isMember)); } else { chatLogsWall.innerHTML = ''; (m.messages || []).forEach(msg => addChatMessage('wall', msg.id, msg.anon, msg.color, msg.text, msg.t, msg.isOwner, msg.isAdmin, msg.isMember)); } return; }
-    if (m.type === 'login-result') { if (m.success) { anonId = m.username; isOwner = m.isOwner; isAdmin = m.isAdmin; isMember = m.isMember; if (m.p) { primaryColor = m.p; customColor1.value = m.p; wallPColor.value = m.p; } if (m.s) { secondaryColor = m.s; customColor2.value = m.s; wallSColor.value = m.s; } if (m.theme) { currentTheme = m.theme; document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === currentTheme)); document.body.className = (lowPerf ? 'perf-mode ' : '') + 'theme-' + currentTheme; updateThemeRgb(); } myColor = activeTier === 1 ? primaryColor : secondaryColor; checkLoginState(); renderPresence(); broadcastCursor(); sendMsg({type:'hello', id:anonId}); } else { localStorage.removeItem('creds'); alert(m.err); sendMsg({type:'hello', id:anonId}); } return; }
+    if (m.type === 'login-result') { if (m.success) { anonId = m.username; isOwner = m.isOwner; isAdmin = m.isAdmin; isMember = m.isMember; if (m.p) { primaryColor = m.p; customColor1.value = m.p; wallPColor.value = m.p; } if (m.s) { secondaryColor = m.s; customColor2.value = m.s; wallSColor.value = m.s; } if (m.theme) { currentTheme = m.theme; document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === currentTheme)); document.body.className = (lowPerf ? 'perf-mode ' : '') + 'theme-' + currentTheme; updateThemeRgb(); } if (m.tier) { activeTier = m.tier; toggleTierBtn.textContent = activeTier; } myColor = activeTier === 1 ? primaryColor : secondaryColor; checkLoginState(); renderPresence(); broadcastCursor(); sendMsg({type:'hello', id:anonId}); } else { localStorage.removeItem('creds'); alert(m.err); sendMsg({type:'hello', id:anonId}); } return; }
     if (m.type === 'system-msg' && m.target === anonId) { alert(m.text); return; }
     if (m.type === 'wall-list') { showWallDirectory(m.walls); return; }
     if (m.type === 'announce') { showAnnouncement(m.text); return; }
@@ -759,6 +769,8 @@ function connect() {
     if (m.type === 'unmute' && m.targetUser === anonId) { mutedUntil = 0; updateMuteBadge(); showToast('You are no longer chat-muted.'); return; }
     if (m.type === 'canvasmute') { if (m.targetUser === anonId) { applyCanvasMute(m); } else if (m.targetUser) { showToast(`${m.targetUser} was canvas-muted${m.permanent ? ' (permanent)' : (m.minutes ? ` (${m.minutes}m)` : '')}.`); } return; }
     if (m.type === 'color-mode') { colorEnabled = m.enabled !== false; if (colorModeToggle) colorModeToggle.classList.toggle('on', colorEnabled); return; }
+    if (m.type === 'payload-stopped') { payloadSuppressedUntil = Date.now() + 60000; hidePayload(); return; }
+    if (m.type === 'purgeall-countdown') { startPurgeCountdown(m.seconds, m.reason); return; }
     if (m.type === 'purgeall') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); showToast('Server wiped: ' + (m.reason || 'all walls and users')); setTimeout(() => location.reload(), 1500); return; }
     if (m.type === 'canvasunmute') { if (m.targetUser === anonId) { clearCanvasMute(); } else if (m.targetUser) { showToast(`${m.targetUser} was canvas-unmuted.`); } return; }
     if (m.type === 'demote' && m.targetUser === anonId) { isAdmin = false; isMember = false; checkLoginState(); renderPresence(); alert('Your admin/member roles have been removed.'); return; }
@@ -768,6 +780,7 @@ function connect() {
     if (m.type === 'purged' && m.targetUser === anonId) { handlePurged(); return; }
     if (m.type === 'purge' && m.targetUser) { showToast(`${m.targetUser} was purged by the owner.`); return; }
     if (m.type === 'users-response' && m.target === anonId) { populatePurge(m.users); return; }
+    if (m.type === 'members-response' && m.target === anonId) { showMembers(m.members || []); return; }
     if (m.type === 'nick' && m.oldId) { if (anonId === m.oldId) { anonId = m.newId; checkLoginState(); renderPresence(); broadcastCursor(); } if (peers.has(m.oldId)) { const p = peers.get(m.oldId); peers.delete(m.oldId); p.anon = m.newId; peers.set(m.id, p); renderRemoteCursors(); renderPresence(); } }
     if (m.type === 'promote' && m.targetUser === anonId) { if(m.role==='admin'){isAdmin=true;} if(m.role==='member'){isMember=true;} checkLoginState(); renderPresence(); alert(`You have been promoted to ${m.role}!`); }
     if (m.type === 'hello' && m.id === 'system') return;
@@ -779,7 +792,7 @@ function connect() {
       case'bye': peers.delete(m.id); typingUsersWall.delete(m.id); renderRemoteCursors(); renderPresence(); updateTypingIndicator(); break;
       case 'chat-message': if (m.scope === 'global') addChatMessage('global', m.id, m.anon, m.color, m.text, m.t, m.isOwner, m.isAdmin, m.isMember); else addChatMessage('wall', m.id, m.anon, m.color, m.text, m.t, m.isOwner, m.isAdmin, m.isMember); break;
       case 'chat-typing': { const map = m.scope === 'global' ? typingUsersGlobal : typingUsersWall; if (m.isTyping) map.set(m.id, m.anon); else map.delete(m.id); if (map === typingUsers) updateTypingIndicator(); break; }
-      case 'admin': if (m.act === 'protect') protectedTiles.add(`${m.col},${m.row}`); else if (m.act === 'deprotect') protectedTiles.delete(`${m.col},${m.row}`); else if (m.act === 'clear') { const c0 = m.col*10-4000, r0 = m.row*20-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+10)*RW, y2: CY+(r0+20)*RH, start: performance.now()}); for(let r=0; r<20; r++) for(let c=0; c<10; c++) grid.delete(`${m.col*10+c-4000},${m.row*20+r-4000}`); } else if (m.act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } break;
+      case 'admin': if (m.act === 'protect') protectedTiles.add(`${m.col},${m.row}`); else if (m.act === 'deprotect') protectedTiles.delete(`${m.col},${m.row}`); else if (m.act === 'clear') { const c0 = m.col*20-4000, r0 = m.row*10-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+20)*RW, y2: CY+(r0+10)*RH, start: performance.now()}); for(let r=0; r<10; r++) for(let c=0; c<20; c++) grid.delete(`${m.col*20+c-4000},${m.row*10+r-4000}`); } else if (m.act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } break;
       case 'areadmin': {
         const c1 = Math.min(m.c1, m.c2), c2 = Math.max(m.c1, m.c2), r1 = Math.min(m.r1, m.r2), r2 = Math.max(m.r1, m.r2); 
         const RWfx = BASE_W * zoom, RHfx = BASE_H * zoom, CXfx = MAP_CX * zoom, CYfx = MAP_CY * zoom; areaFx.push({x1: CXfx+c1*RWfx, y1: CYfx+r1*RHfx, x2: CXfx+(c2+1)*RWfx, y2: CYfx+(r2+1)*RHfx, start: performance.now()}); 
@@ -800,7 +813,7 @@ let cursorT=null;
 function broadcastCursor(){ if(cursorT) return; cursorT=setTimeout(()=>{ sendMsg({type:'cursor',id:anonId,anon:anonId,color:myColor,col:caret.col,row:caret.row,isOwner:isOwner,isAdmin:isAdmin,isMember:isMember,t:Date.now()}); cursorT=null; },50); }
 const peers=new Map();
 function renderRemoteCursors(){ cursorsEl.innerHTML=''; const RW = BASE_W * zoom, RH = BASE_H * zoom; const CX = MAP_CX * zoom, CY = MAP_CY * zoom; const scrollX = app.scrollLeft, scrollY = app.scrollTop; for(const[,p] of peers){ const x=CX+p.col*RW - scrollX, y=CY+p.row*RH - scrollY; if(x<-50||x>window.innerWidth+50||y<-50||y>window.innerHeight+50) continue; const c=document.createElement('div'); c.className='rcursor'; if (useOldHighlight) c.classList.add('old-highlight'); c.style.transform=`translate(${x}px,${y}px) scale(${zoom})`; c.style.setProperty('--c',p.color.startsWith('#')?p.color:'#ffffff'); let labelText = p.anon; if (hideAnon && labelText.startsWith('ANON-')) labelText = 'Anon'; c.innerHTML=`<div class="bar"></div><div class="label">${labelText}</div>`; cursorsEl.appendChild(c); } }
-function renderPresence() { userListContainer.innerHTML=''; const selfChip=document.createElement('div'); selfChip.className='user-chip self' + (isOwner ? ' is-owner' : (isAdmin ? ' is-admin' : (isMember ? ' is-member' : ''))) + (currentWall === '~' + anonId ? ' is-wall-link' : ''); selfChip.style.setProperty('--c',primaryColor); let selfText = anonId; if (hideAnon && selfText.startsWith('ANON-')) selfText = 'Anon'; selfChip.textContent = selfText + (isOwner ? ' (Owner)' : (isAdmin ? ' (Admin)' : (isMember ? ' (Member)' : ''))); selfChip.onclick = () => switchWall('~' + anonId); userListContainer.appendChild(selfChip); for(const[,p] of peers){ const chip=document.createElement('div'); chip.className='user-chip other' + (p.isOwner ? ' is-owner' : (p.isAdmin ? ' is-admin' : (p.isMember ? ' is-member' : ''))) + ' is-wall-link'; chip.style.setProperty('--c',p.color.startsWith('#')?p.color:'#ffffff'); let pText = p.anon; if (hideAnon && pText.startsWith('ANON-')) pText = 'Anon'; chip.textContent = pText + (p.isOwner ? ' (Owner)' : (p.isAdmin ? ' (Admin)' : (p.isMember ? ' (Member)' : ''))); chip.onclick = () => switchWall('~' + p.anon); userListContainer.appendChild(chip); } }
+function renderPresence() { if(onlineBtn) onlineBtn.textContent='Online: '+(peers.size+1); userListContainer.innerHTML=''; const selfChip=document.createElement('div'); selfChip.className='user-chip self' + (isOwner ? ' is-owner' : (isAdmin ? ' is-admin' : (isMember ? ' is-member' : ''))) + (currentWall === '~' + anonId ? ' is-wall-link' : ''); selfChip.style.setProperty('--c',primaryColor); let selfText = anonId; if (hideAnon && selfText.startsWith('ANON-')) selfText = 'Anon'; selfChip.textContent = selfText + (isOwner ? ' (Owner)' : (isAdmin ? ' (Admin)' : (isMember ? ' (Member)' : ''))); selfChip.onclick = () => switchWall('~' + anonId); userListContainer.appendChild(selfChip); for(const[,p] of peers){ const chip=document.createElement('div'); chip.className='user-chip other' + (p.isOwner ? ' is-owner' : (p.isAdmin ? ' is-admin' : (p.isMember ? ' is-member' : ''))) + ' is-wall-link'; chip.style.setProperty('--c',p.color.startsWith('#')?p.color:'#ffffff'); let pText = p.anon; if (hideAnon && pText.startsWith('ANON-')) pText = 'Anon'; chip.textContent = pText + (p.isOwner ? ' (Owner)' : (p.isAdmin ? ' (Admin)' : (p.isMember ? ' (Member)' : ''))); chip.onclick = () => switchWall('~' + p.anon); userListContainer.appendChild(chip); } }
 
 userListContainer.addEventListener('click', () => { showToast(`${globalOnlineCount} users online.`); });
 chatHandle.addEventListener('click', () => { chatWindow.classList.toggle('open'); if(chatWindow.classList.contains('open')) { chatUnread.wall = 0; chatUnread.global = 0; updateChatUnread(); } });
@@ -815,8 +828,8 @@ let typingDots = 0;
 setInterval(() => { if (typingUsers.size > 0) { typingDots = (typingDots + 1) % 4; updateTypingIndicator(); } }, 500);
 function updateTypingIndicator() { let text = ""; let hasText = false; if (typingUsers.size > 0) { hasText = true; if (typingUsers.size >= 4 && !typingExpanded) text = "Several Users are typing"; else { const names = Array.from(typingUsers.values()).map(n => (hideAnon && n.startsWith('ANON-')) ? 'Anon' : n).join(', '); text = `${names} is typing`; } } if (hasText) { chatTyping.innerHTML = `<span>${text}${'.'.repeat(typingDots)}</span>`; } else { chatTyping.innerHTML = ''; } }
 
-function handleStart(e) { if (e.target !== app && !e.target.classList.contains('spacer')) return; if (e.touches && e.touches.length > 1) return; if (selAct) { if (e.cancelable) e.preventDefault(); isSelecting = true; const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selStart = {col: snapTile(caret.col), row: snapTile(caret.row)}; selEnd = selStart; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (1 chars)`); } }
-function handleMove(e) { if (!isSelecting) return; if (e.touches && e.touches.length > 1) return; if (e.cancelable) e.preventDefault(); const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selEnd = {col: snapTile(caret.col), row: snapTile(caret.row)}; const w = Math.abs(selEnd.col - selStart.col) + 1; const h = Math.abs(selEnd.row - selStart.row) + 1; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (${w*h} chars)`); }
+function handleStart(e) { if (e.target !== app && !e.target.classList.contains('spacer')) return; if (e.touches && e.touches.length > 1) return; if (selAct) { if (e.cancelable) e.preventDefault(); isSelecting = true; const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selStart = {col: snapCol(caret.col), row: snapRow(caret.row)}; selEnd = selStart; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (1 chars)`); } }
+function handleMove(e) { if (!isSelecting) return; if (e.touches && e.touches.length > 1) return; if (e.cancelable) e.preventDefault(); const pt = e.touches ? e.touches[0] : e; placeCaretFromPixel(pt.clientX + app.scrollLeft, pt.clientY + app.scrollTop); selEnd = {col: snapCol(caret.col), row: snapRow(caret.row)}; const w = Math.abs(selEnd.col - selStart.col) + 1; const h = Math.abs(selEnd.row - selStart.row) + 1; showToast(`Select area to ${selAct === 'copy' ? 'copy' : selAct} (${w*h} chars)`); }
 function handleEnd(e) { if (!isSelecting) return; isSelecting = false; const c1 = Math.min(selStart.col, selEnd.col), c2 = Math.max(selStart.col, selEnd.col), r1 = Math.min(selStart.row, selEnd.row), r2 = Math.max(selStart.row, selEnd.row); const act = selAct; selAct = null; app.classList.remove('no-sel'); notifToast.classList.remove('show'); const RWfx = BASE_W * zoom, RHfx = BASE_H * zoom, CXfx = MAP_CX * zoom, CYfx = MAP_CY * zoom; areaFx.push({x1: CXfx+c1*RWfx, y1: CYfx+r1*RHfx, x2: CXfx+(c2+1)*RWfx, y2: CYfx+(r2+1)*RHfx, start: performance.now()}); if (act === 'copy') { clipboardMap.clear(); for(let r=r1; r<=r2; r++) { for(let c=c1; c<=c2; c++) { const k = `${c},${r}`; if (grid.has(k)) clipboardMap.set(`${c-c1},${r-r1}`, grid.get(k)); } } showToast(`Copied ${clipboardMap.size} chars`); } else { if (act === 'areaprotect') protectedAreas.add(`${c1},${r1},${c2},${r2}`); if (act === 'areadeprotect') { const toRemove = []; for (const a of protectedAreas) { const [ac1, ar1, ac2, ar2] = a.split(',').map(Number); if (Math.max(ac1, c1) <= Math.min(ac2, c2) && Math.max(ar1, r1) <= Math.min(ar2, r2)) toRemove.push(a); } toRemove.forEach(a => protectedAreas.delete(a)); } if (act === 'areaclear') for(let r=r1; r<=r2; r++) { for(let c=c1; c<=c2; c++) grid.delete(`${c},${r}`); } sendMsg({type:'areadmin', id:anonId, act, c1, r1, c2, r2}); } justFinishedSelecting = true; setTimeout(() => justFinishedSelecting = false, 200); }
 app.addEventListener('mousedown', handleStart); app.addEventListener('touchstart', handleStart, {passive: false});
 window.addEventListener('mousemove', handleMove); window.addEventListener('touchmove', handleMove, {passive: false});
@@ -868,21 +881,32 @@ gradSpeedSlider.addEventListener('input', function(e){ setGradSpeed(parseInt(e.t
 gradSpeedBox.addEventListener('input', function(e){ const v=parseInt(e.target.value); if(!isNaN(v)) setGradSpeed(v); });
 function setGradSpeed(v){ gradientSpeed = Math.max(1, Math.round(v||1)); gradSpeedSlider.value = Math.min(60, Math.max(2, gradientSpeed)); gradSpeedBox.value = gradientSpeed; localStorage.setItem('gradientSpeed', gradientSpeed); }
 setGradSpeed(gradientSpeed);
+onlineBtn.addEventListener('click', function(){ showToast('Current Online: ' + (peers.size + 1) + ', Global Users Online: ' + globalOnlineCount); });
+membersBtn.addEventListener('click', loadMemberList);
+membersOverlay.addEventListener('click', function(){ membersModal.style.display = 'none'; });
+function loadMemberList(){ sendMsg({type:'members-request', id:anonId}); }
+let payloadSuppressedUntil = 0;
+function checkPayload(){ if (currentPing > 1500 && Date.now() > payloadSuppressedUntil) showPayload(); else if (currentPing <= 1500) hidePayload(); }
+function showPayload(){ if(!payloadBanner || payloadBanner.classList.contains('show')) return; payloadBanner.textContent='The server is getting payloaded, please wait for the console to enter /stoppayload'; payloadBanner.classList.add('show'); }
+function hidePayload(){ if(payloadBanner) payloadBanner.classList.remove('show'); }
+let purgeEnd=0, purgeTickIv=null;
+function startPurgeCountdown(seconds, reason){ purgeEnd=Date.now()+seconds*1000; const r=purgeCountdown.querySelector('.pc-reason'); if(r) r.textContent=reason||''; purgeCountdown.style.display='flex'; if(purgeTickIv) clearInterval(purgeTickIv); purgeTickIv=setInterval(function(){ const left=Math.max(0,Math.ceil((purgeEnd-Date.now())/1000)); const num=purgeCountdown.querySelector('.pc-num'); if(num) num.textContent=left; const pct= left>0? (left/seconds)*100 : 0; const c=purgeCountdown.querySelector('.pc-circle'); if(c) c.style.background='conic-gradient(#ff4756 '+pct+'%, rgba(255,71,86,0.15) '+pct+'%)'; if(left<=0){ if(purgeTickIv){clearInterval(purgeTickIv);purgeTickIv=null;} } },250); }
+function showMembers(list){ membersList.innerHTML=''; if(!list.length){ membersList.textContent='No members.'; } else { list.forEach(function(m){ const row=document.createElement('div'); row.className='member-row'; const role=m.role||'member'; const color=role==='owner'?'#ff8a3d':role==='admin'?'#9d4edd':'#00b4d8'; const n=document.createElement('span'); n.textContent=m.u; n.style.color=color; n.style.fontWeight='700'; const r=document.createElement('span'); r.textContent=role+(m.online?' online':''); r.style.cssText='font-size:9px;text-transform:uppercase;letter-spacing:1px;color:'+color; row.appendChild(n); row.appendChild(r); membersList.appendChild(row); }); } membersModal.style.display='flex'; }
 document.querySelectorAll('.theme-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentTheme = btn.dataset.theme; document.body.className = (lowPerf ? 'perf-mode ' : '') + 'theme-' + currentTheme; updateThemeRgb(); }); });
 zoomSlider.addEventListener('input', e => applyZoom(parseInt(e.target.value)));
 fontSelect.addEventListener('change', e => editorFont = e.target.value);
 
 function checkLoginState() { ownerPanel.style.display = isOwner ? 'block' : 'none'; modPanel.style.display = (isOwner || isAdmin) ? 'block' : 'none'; memberPanel.style.display = (isOwner || isAdmin || isMember) ? 'block' : 'none'; noAdminPerms.style.display = (isOwner || isAdmin || isMember) ? 'none' : 'block'; userWallPanel.style.display = (!anonId.startsWith('ANON-') && currentWall !== 'Main' && currentWall !== 'walls') ? 'block' : 'none'; if (!anonId.startsWith('ANON-') || isMember || isAdmin || isOwner) logoutBtn.style.display = 'block'; else logoutBtn.style.display = 'none'; saveAppearanceBtn.style.display = anonId.startsWith('ANON-') ? 'none' : 'block'; colorModeSection.style.display = (isOwner || isAdmin) ? 'block' : 'none'; snapSection.style.display = (isOwner || isAdmin || isMember) ? 'block' : 'none'; }
-loginBtn.addEventListener('click', () => { const u = prompt('Enter username:', savedCreds.u || ''); if (!u) return; const p = prompt('Enter password:', savedCreds.p || ''); if (!p) return; localStorage.setItem('creds', JSON.stringify({u, p})); sendMsg({type:'login', id: anonId, wallId: currentWall, u, p, pColor: primaryColor, sColor: secondaryColor, theme: currentTheme}); });
+loginBtn.addEventListener('click', () => { const u = prompt('Enter username:', savedCreds.u || ''); if (!u) return; const p = prompt('Enter password:', savedCreds.p || ''); if (!p) return; localStorage.setItem('creds', JSON.stringify({u, p})); sendMsg({type:'login', id: anonId, wallId: currentWall, u, p, pColor: primaryColor, sColor: secondaryColor, theme: currentTheme, tier: activeTier}); });
 logoutBtn.addEventListener('click', () => { localStorage.removeItem('creds'); anonId = originalAnonId; isOwner = false; isAdmin = false; isMember = false; renderPresence(); broadcastCursor(); checkLoginState(); sendMsg({type:'hello', id:anonId}); });
-saveAppearanceBtn.addEventListener('click', () => { if (anonId.startsWith('ANON-')) return alert('Log in to save your appearance.'); sendMsg({type:'save-profile', id: anonId, theme: currentTheme, p: primaryColor, s: secondaryColor}); showToast('Appearance saved to your account.'); });
+saveAppearanceBtn.addEventListener('click', () => { if (anonId.startsWith('ANON-')) return alert('Log in to save your appearance.'); sendMsg({type:'save-profile', id: anonId, theme: currentTheme, p: primaryColor, s: secondaryColor, tier: activeTier}); showToast('Appearance saved to your account.'); });
 
 wallPColor.addEventListener('input', e => { primaryColor = e.target.value; customColor1.value = primaryColor; if(activeTier===1){ myColor = primaryColor; renderPresence(); broadcastCursor(); } });
 wallSColor.addEventListener('input', e => { secondaryColor = e.target.value; customColor2.value = secondaryColor; if(activeTier===2){ myColor = secondaryColor; renderPresence(); broadcastCursor(); } });
 quickUserWallBtn.addEventListener('click', () => switchWall('~' + anonId));
 
-function handleAdminAction(act, tx, ty) { if (act === 'protect') protectedTiles.add(`${tx},${ty}`); else if (act === 'deprotect') protectedTiles.delete(`${tx},${ty}`); else if (act === 'clear') { const c0 = tx*10-4000, r0 = ty*20-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+10)*RW, y2: CY+(r0+20)*RH, start: performance.now()}); for(let r=0; r<20; r++) for(let c=0; c<10; c++) grid.delete(`${tx*10+c-4000},${ty*20+r-4000}`); } else if (act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } sendMsg({type:'admin', id:anonId, act, col:tx, row:ty}); }
-document.querySelectorAll('.admin-btn[data-admin]').forEach(btn => { btn.addEventListener('click', () => { const parent = btn.closest('#ownerPanel, #userWallPanel, #modPanel, #memberPanel'); const isOwnerPanel = parent.id === 'ownerPanel'; const isModPanel = parent.id === 'modPanel'; if (isOwnerPanel && !isOwner) return alert('You are not the owner.'); if (isModPanel && !isOwner && !isAdmin) return alert('You are not an admin.'); if (!isOwner && !isAdmin && !isMember && !(currentWall === '~' + anonId)) return alert('You do not have permission.'); const act = btn.dataset.admin; const tx = Math.floor((caret.col + 4000) / 10); const ty = Math.floor((caret.row + 4000) / 20); handleAdminAction(act, tx, ty); }); });
+function handleAdminAction(act, tx, ty) { if (act === 'protect') protectedTiles.add(`${tx},${ty}`); else if (act === 'deprotect') protectedTiles.delete(`${tx},${ty}`); else if (act === 'clear') { const c0 = tx*20-4000, r0 = ty*10-4000; const RW = BASE_W * zoom, RH = BASE_H * zoom, CX = MAP_CX * zoom, CY = MAP_CY * zoom; areaFx.push({x1: CX+c0*RW, y1: CY+r0*RH, x2: CX+(c0+20)*RW, y2: CY+(r0+10)*RH, start: performance.now()}); for(let r=0; r<10; r++) for(let c=0; c<20; c++) grid.delete(`${tx*20+c-4000},${ty*10+r-4000}`); } else if (act === 'wallclear') { grid.clear(); protectedTiles.clear(); protectedAreas.clear(); } sendMsg({type:'admin', id:anonId, act, col:tx, row:ty}); }
+document.querySelectorAll('.admin-btn[data-admin]').forEach(btn => { btn.addEventListener('click', () => { const parent = btn.closest('#ownerPanel, #userWallPanel, #modPanel, #memberPanel'); const isOwnerPanel = parent.id === 'ownerPanel'; const isModPanel = parent.id === 'modPanel'; if (isOwnerPanel && !isOwner) return alert('You are not the owner.'); if (isModPanel && !isOwner && !isAdmin) return alert('You are not an admin.'); if (!isOwner && !isAdmin && !isMember && !(currentWall === '~' + anonId)) return alert('You do not have permission.'); const act = btn.dataset.admin; const tx = Math.floor((caret.col + 4000) / 20); const ty = Math.floor((caret.row + 4000) / 10); handleAdminAction(act, tx, ty); }); });
 const selBtns = [
   { id: 'selClearBtn', act: 'areaclear', role: 'owner' }, { id: 'selProtBtn', act: 'areaprotect', role: 'owner' }, { id: 'selDeprotBtn', act: 'areadeprotect', role: 'owner' },
   { id: 'selClearBtnA', act: 'areaclear', role: 'admin' }, { id: 'selProtBtnA', act: 'areaprotect', role: 'admin' }, { id: 'selDeprotBtnA', act: 'areadeprotect', role: 'admin' },
@@ -960,13 +984,13 @@ axotaRun.addEventListener('click', () => { const code = axotaCode.value; try { n
 loadErudaBtn.addEventListener('click', () => { if (window.eruda) { eruda.show(); return; } const s = document.createElement('script'); s.src = "https://cdn.jsdelivr.net/npm/eruda"; document.body.appendChild(s); s.onload = () => { eruda.init(); eruda.show(); }; });
 
 setInterval(()=>{ broadcastCursor(); const now=Date.now(); let changed=false; for(const[id,p] of peers){ if(now-p.lastSeen>5000){ peers.delete(id); typingUsersWall.delete(id); changed=true; } } if(changed){ renderRemoteCursors(); renderPresence(); updateTypingIndicator(); } },2500);
-setInterval(() => { if (showPing) sendMsg({type:'ping', id: anonId, t: Date.now()}); }, 2000);
-setInterval(() => { if (!anonId.startsWith('ANON-')) sendMsg({type:'save-profile', id: anonId, theme: currentTheme, p: primaryColor, s: secondaryColor}); }, 15000);
+setInterval(() => { sendMsg({type:'ping', id: anonId, t: Date.now()}); }, 2000);
+setInterval(() => { if (!anonId.startsWith('ANON-')) sendMsg({type:'save-profile', id: anonId, theme: currentTheme, p: primaryColor, s: secondaryColor, tier: activeTier}); }, 15000);
 
 updateCoord(); renderPresence(); showColorToggle.classList.toggle('on', showColor); colorModeToggle.classList.toggle('on', colorEnabled); checkLoginState(); applyPerf(); rafId = requestAnimationFrame(renderLoop); applyZoom(100); connect()
 setTimeout(() => app.scrollTo((MAP_CX * zoom) - window.innerWidth/2, (MAP_CY * zoom) - window.innerHeight/2), 1000);
 window.addEventListener('pagehide', ()=>sendMsg({type:'bye',id:anonId}));
 window.addEventListener('beforeunload', ()=>sendMsg({type:'bye',id:anonId}));
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2d55a06594154c7',t:'MTc4NzEwMjU5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2de198649813005',t:'MTc4NzE5NDMyMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
